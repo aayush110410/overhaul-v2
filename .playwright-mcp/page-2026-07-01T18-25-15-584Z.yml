@@ -1,0 +1,84 @@
+- generic [ref=e3]:
+  - navigation [ref=e5]:
+    - generic [ref=e6]:
+      - text: OVERHAUL
+      - generic [ref=e7]: HIVE COMMAND
+    - generic [ref=e8]:
+      - generic [ref=e9]: HIVE MOOD
+      - generic [ref=e10]: IDLE
+      - generic [ref=e11]: 0% consensus
+    - link "RETURN HOME" [ref=e13]:
+      - /url: /
+  - generic:
+    - generic [ref=e14]:
+      - generic [ref=e15]:
+        - generic [ref=e17]: SEGMENT BRAINS
+        - generic [ref=e20]:
+          - generic [ref=e21] [cursor=pointer]:
+            - generic [ref=e22]:
+              - generic [ref=e23]: Office Workers
+              - img [ref=e24]:
+                - generic [ref=e27]: "0"
+            - generic [ref=e29]: waiting
+            - generic [ref=e30]: no routing truth yet
+          - generic [ref=e31] [cursor=pointer]:
+            - generic [ref=e32]:
+              - generic [ref=e33]: Gig Workers
+              - img [ref=e34]:
+                - generic [ref=e37]: "0"
+            - generic [ref=e39]: waiting
+            - generic [ref=e40]: no routing truth yet
+          - generic [ref=e41] [cursor=pointer]:
+            - generic [ref=e42]:
+              - generic [ref=e43]: Students
+              - img [ref=e44]:
+                - generic [ref=e47]: "0"
+            - generic [ref=e49]: waiting
+            - generic [ref=e50]: no routing truth yet
+          - generic [ref=e51] [cursor=pointer]:
+            - generic [ref=e52]:
+              - generic [ref=e53]: Service Sector
+              - img [ref=e54]:
+                - generic [ref=e57]: "0"
+            - generic [ref=e59]: waiting
+            - generic [ref=e60]: no routing truth yet
+          - generic [ref=e61] [cursor=pointer]:
+            - generic [ref=e62]:
+              - generic [ref=e63]: Industrial
+              - img [ref=e64]:
+                - generic [ref=e67]: "0"
+            - generic [ref=e69]: waiting
+            - generic [ref=e70]: no routing truth yet
+          - generic [ref=e71] [cursor=pointer]:
+            - generic [ref=e72]:
+              - generic [ref=e73]: Seniors
+              - img [ref=e74]:
+                - generic [ref=e77]: "0"
+            - generic [ref=e79]: waiting
+            - generic [ref=e80]: no routing truth yet
+          - generic [ref=e81] [cursor=pointer]:
+            - generic [ref=e82]:
+              - generic [ref=e83]: High Income
+              - img [ref=e84]:
+                - generic [ref=e87]: "0"
+            - generic [ref=e89]: waiting
+            - generic [ref=e90]: no routing truth yet
+      - generic [ref=e91]:
+        - generic [ref=e93]: SURGICAL TRACE
+        - generic [ref=e96]:
+          - generic [ref=e97]: "SENSING: live AQI / traffic"
+          - generic [ref=e98]: "REASONING: sentinels (LLM)"
+          - generic [ref=e99]: "DISTILLING: segment brains"
+          - generic [ref=e100]: "EXECUTING: swarm + engines"
+      - generic [ref=e101]:
+        - generic [ref=e103]: HIVE TELEMETRY
+        - generic [ref=e106]: Awaiting first run…
+    - generic [ref=e108]:
+      - generic [ref=e110]: COGNITIVE INTERFACE
+      - generic [ref=e112]:
+        - generic [ref=e114]:
+          - generic [ref=e115]: HIVE-AI
+          - generic [ref=e116]: Issue a policy what-if for Delhi NCR — e.g. “ban diesel trucks on Ring Road 7–10am” or “congestion pricing in central Delhi”. I’ll run the Sentinel-Swarm-Hive loop and return a decision-grade brief. Click any probe on the map to see its reasoning.
+        - generic [ref=e117]:
+          - textbox "Issue a surgical command…" [ref=e118]
+          - button "EXECUTE" [ref=e119] [cursor=pointer]

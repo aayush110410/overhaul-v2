@@ -1,0 +1,9 @@
+{
+    "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+    "python.terminal.activateEnvironment": true,
+    "python.languageServer": "Pylance",
+    "python.linting.enabled": false,
+    "pylint.enabled": false,
+    "mypy.enabled": false,
+    "editor.formatOnSave": false
+}

@@ -1,0 +1,90 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "overhaul: backend (8000)",
+			"type": "shell",
+			"command": "/Users/aayushsharma/Desktop/Overhaul/OVERHAUL-main/.venv/bin/python -m uvicorn app:app --host 0.0.0.0 --port 8000",
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "overhaul: landing-react (5173)",
+			"type": "shell",
+			"command": "cd /Users/aayushsharma/Desktop/Overhaul/OVERHAUL-main/landing-react && npm run dev -- --host 0.0.0.0 --port 5173",
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "overhaul: flyover (5174)",
+			"type": "shell",
+			"command": "cd /Users/aayushsharma/Desktop/Overhaul/OVERHAUL-main/ai-flyover-sim/frontend && npm run dev -- --host 0.0.0.0 --port 5174",
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "overhaul: flyover (5174)",
+			"type": "shell",
+			"command": "cd /Users/aayushsharma/Desktop/Overhaul/OVERHAUL-main/ai-flyover-sim/frontend && npm run dev -- --host 0.0.0.0 --port 5174",
+			"isBackground": true,
+			"problemMatcher": []
+		},
+		{
+			"label": "Run Vite (landing-react)",
+			"type": "shell",
+			"command": "npm",
+			"args": [
+				"--prefix",
+				"landing-react",
+				"run",
+				"dev",
+				"--",
+				"--host",
+				"0.0.0.0",
+				"--port",
+				"5173"
+			],
+			"isBackground": true
+		},
+		{
+			"label": "overhaul-backend",
+			"type": "shell",
+			"command": "./.venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 8000",
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "overhaul-backend",
+			"type": "shell",
+			"command": "./.venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 8000",
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "overhaul-backend",
+			"type": "shell",
+			"command": "./.venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 8000",
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "overhaul-backend",
+			"type": "shell",
+			"command": "./.venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 8000",
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		},
+		{
+			"label": "overhaul-backend",
+			"type": "shell",
+			"command": "./.venv/bin/python -m uvicorn app:app --host 127.0.0.1 --port 8000",
+			"isBackground": true,
+			"problemMatcher": [],
+			"group": "build"
+		}
+	]
+}

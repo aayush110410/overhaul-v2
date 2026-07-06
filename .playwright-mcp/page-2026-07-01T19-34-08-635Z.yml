@@ -1,0 +1,21 @@
+- generic [ref=e3]:
+  - banner [ref=e5]:
+    - generic [ref=e6]:
+      - text: OVERHAUL
+      - generic [ref=e7]: HIVE COMMAND
+    - generic [ref=e8]:
+      - generic [ref=e10]: IDLE
+      - generic [ref=e11]: standby
+      - link "EXIT" [ref=e12]:
+        - /url: /
+  - generic [ref=e13]:
+    - generic [ref=e14]: SENTINEL · SWARM · HIVE
+    - heading "Simulate reality before you change it." [level=1] [ref=e15]:
+      - text: Simulate reality
+      - emphasis [ref=e16]: before
+      - text: you change it.
+    - paragraph [ref=e17]: Ask a Delhi-NCR policy what-if. Fifty reasoning agents, seven collective minds, and seven impact engines return one defensible brief.
+  - generic [ref=e18]:
+    - generic [ref=e19]: ⌕
+    - textbox "Ask a policy what-if — e.g. congestion pricing in central Delhi…" [active] [ref=e20]
+    - button "RUN" [disabled] [ref=e21]

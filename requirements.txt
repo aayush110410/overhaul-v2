@@ -1,0 +1,47 @@
+# ── OVERHAUL backend dependencies ──────────────────────────────────────
+# Web / API
+fastapi>=0.110.0,<1.0.0
+uvicorn[standard]>=0.30.0,<0.33.0
+httpx>=0.27.0
+anyio>=4.4.0
+pydantic>=2.6.0
+python-dotenv>=1.0.1
+
+# Data / persistence
+numpy>=1.26.0
+pandas>=2.2.2
+openpyxl>=3.1.0
+pypdf>=5.0.0
+joblib>=1.3.0
+pyyaml>=6.0.2
+SQLAlchemy>=2.0.30
+aiosqlite>=0.20.0
+supabase>=2.4.0
+
+# ML (baseline models loaded via joblib + RAG embeddings)
+scikit-learn>=1.4.0
+xgboost>=2.1.0
+sentence-transformers>=2.7.0
+
+# Reasoning layer — Gemini SDK is optional (llm/chat.py uses raw httpx REST)
+google-generativeai>=0.8.0
+
+# Custom local "Traffic God" LLM (new_traffic_god/, /traffic-god-llm)
+torch
+
+# Swappable knowledge-graph backend (optional; GRAPH_BACKEND=zep)
+zep-cloud==3.13.0
+
+# Misc
+structlog
+matplotlib>=3.9.0
+
+# Tests
+pytest>=8.2.0
+pytest-asyncio==0.23.6
+
+# ── Dev-only (install manually): flake8 mypy black jupyterlab ──
+#
+# Removed 2026-07-01 (dead after legacy cleanup): camel-ai, sumolib, traci,
+# opencv-python-headless, ultralytics, norfair, stable-baselines3, gym,
+# tensorboard, chromadb — all tied to the removed traffic-god CV/RL pipeline.

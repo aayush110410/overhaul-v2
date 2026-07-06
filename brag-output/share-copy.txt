@@ -1,0 +1,26 @@
+Built OVERHAUL — pick any real city corridor and simulate its traffic, air quality, and a 3D flyover in one click. The world, reimagined. 🌐⚡
+
+—
+
+Twitter/X:
+We didn't build another dashboard. We built a simulation engine for cities.
+
+OVERHAUL: drop two points on a map → watch traffic route, air quality model, and a 3D flyover render. Powered by Qwen 3 + Gemini 3 Pro + OpenStreetMap.
+
+Simulating tomorrow, today. 🌐
+
+—
+
+LinkedIn:
+Excited to share OVERHAUL — an education-first earth simulation platform that turns any city corridor into a live model of how it moves and breathes.
+
+Pick an origin and destination, hit Simulate, and OVERHAUL runs traffic flow, air-quality modeling, and a 3D flyover in seconds — combining a deterministic simulation engine with multi-model AI (Qwen 3 + Gemini 3 Pro) and OpenStreetMap.
+
+10,000+ simulations run · 150+ cities · 2.3M data points/day.
+
+The world, reimagined. 🌐
+
+—
+
+Discord:
+yo we shipped OVERHAUL 🚀 drop 2 points on a map → traffic + air quality + 3D flyover simulated in one click. lime-on-black, fully brutalist. simulating tomorrow, today 🌐

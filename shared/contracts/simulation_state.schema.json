@@ -1,0 +1,95 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://overhaul.dev/contracts/simulation_state.schema.json",
+  "title": "SimulationState",
+  "description": "Canonical response contract for POST /simulate/hive. Source of truth for both the FastAPI response_model and the frontend command center.",
+  "type": "object",
+  "required": ["query", "brains", "sentinels", "timesteps", "engine_results", "report"],
+  "properties": {
+    "query": { "type": "string" },
+    "city": { "type": "string", "default": "delhi" },
+    "scenario": { "type": "string" },
+    "brains": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["segment", "label", "segment_mood", "confidence"],
+        "properties": {
+          "segment": { "type": "string" },
+          "label": { "type": "string" },
+          "segment_mood": { "enum": ["frustrated", "adaptive", "stable", "optimistic"] },
+          "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+          "preferred_routes": { "type": "array", "items": { "type": "string" } },
+          "avoid_zones": { "type": "array", "items": { "type": "string" } },
+          "dissenting_signals": { "type": "array", "items": { "type": "string" } },
+          "stale": { "type": "boolean" }
+        }
+      }
+    },
+    "sentinels": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "segment", "coords"],
+        "properties": {
+          "id": { "type": "integer" },
+          "segment": { "type": "string" },
+          "coords": {
+            "type": "array",
+            "items": { "type": "number" },
+            "minItems": 2,
+            "maxItems": 2,
+            "description": "[lon, lat]"
+          },
+          "mood": { "enum": ["frustrated", "adaptive", "stable", "optimistic"] },
+          "confidence": { "type": "number", "minimum": 0.0, "maximum": 1.0 },
+          "trace": {
+            "type": "object",
+            "properties": {
+              "why": { "type": "string" },
+              "route": { "type": "array", "items": { "type": "string" } },
+              "fallback": { "type": "boolean" }
+            }
+          }
+        }
+      }
+    },
+    "geojson": {
+      "type": "object",
+      "description": "FeatureCollection of congestion-colored road edges (LineString features)."
+    },
+    "timesteps": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["step"],
+        "properties": {
+          "step": { "type": "integer" },
+          "avg_speed_kmh": { "type": "number" },
+          "congestion_pct": { "type": "number" },
+          "agents_arrived": { "type": "integer" },
+          "mode_shifts": { "type": "integer" },
+          "sentinel_discoveries": { "type": "integer" },
+          "distillations": { "type": "integer" },
+          "swarm_inherited_routes": { "type": "integer" },
+          "sentinel_fallbacks": { "type": "integer" }
+        }
+      }
+    },
+    "engine_results": {
+      "type": "object",
+      "description": "Per-domain metrics from the 7 engines, e.g. { domains: { transport: {...}, environment: {...} } }."
+    },
+    "report": {
+      "type": "object",
+      "properties": {
+        "verdict": { "type": "object" },
+        "summary": { "type": "string" },
+        "recommendations": { "type": "array", "items": { "type": "string" } },
+        "segment_insights": { "type": "object" }
+      }
+    },
+    "stats": { "type": "object", "description": "ReasoningGateway.stats() snapshot." },
+    "manifest": { "type": "object" }
+  }
+}

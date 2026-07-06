@@ -1,0 +1,60 @@
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+.Python
+env/
+venv/
+.venv/
+pip-log.txt
+
+# Build outputs
+dist/
+build/
+*.egg-info/
+.eggs/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+
+# Environment
+.env
+.env.local
+*.log
+
+# Models (large files)
+*.pkl
+*.h5
+*.pt
+*.pth
+
+# Storage
+storage/
+*.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Large / generated data
+new_traffic_god/
+external/
+traffic-god/data/processed/trajectories.csv
+
+# Cache
+.mypy_cache/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Server logs
+server.log

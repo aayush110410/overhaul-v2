@@ -18,6 +18,7 @@ import asyncio
 import copy
 import logging
 import math
+import os
 import random
 import time
 import uuid
@@ -129,6 +130,11 @@ class WorldSession:
         self._sentinel_indices = [
             a.idx for a in movement.agents if a.agent_class == 1
         ]
+
+        from engines.environment.aqi_model import AQISeries, open_meteo_live_fetcher
+
+        self.aqi_series = AQISeries(profile, fetch_live=open_meteo_live_fetcher(profile))
+        self._rng = random.Random(hash(session_id) & 0xFFFF)
 
     # ── subscriptions ──
 
@@ -267,6 +273,29 @@ class WorldSession:
             self._last_engine_s = self.sim_s
             await self._refresh_engines()
 
+    def _sim_datetime(self) -> datetime:
+        """Sim-world datetime: today's date shifted by the prompt's date
+        context (diwali/winter/monsoon/summer), at the accelerated sim clock."""
+        base = datetime.now()
+        ctx = self.conditions.date_context
+        if ctx == "diwali":
+            from engines.environment.aqi_model import DIWALI_DATES
+
+            d = DIWALI_DATES.get(base.year) or DIWALI_DATES.get(base.year + 1)
+            if d:
+                base = base.replace(year=d.year, month=d.month, day=d.day)
+        elif ctx == "winter" and base.month not in (11, 12, 1, 2):
+            base = base.replace(month=12, day=15)
+        elif ctx == "monsoon" and base.month not in (7, 8):
+            base = base.replace(month=7, day=15)
+        elif ctx == "summer" and base.month not in (4, 5, 6):
+            base = base.replace(month=5, day=15)
+        clock = (self.clock0_s + self.sim_s) % 86400
+        return base.replace(
+            hour=int(clock // 3600), minute=int((clock % 3600) // 60),
+            second=0, microsecond=0,
+        )
+
     def _metrics_core(self) -> Dict[str, Any]:
         agents = self.movement.agents
         en_route = [a for a in agents if a.state in ("moving", "congested", "queued")]
@@ -323,6 +352,21 @@ class WorldSession:
                 }
             )
 
+        # Hive → movement: the distilled CollectiveTruth re-routes a sample of
+        # the swarm around avoid-zones (visible on the map within seconds).
+        preferred, avoid = set(), set()
+        for brain in self.swarm.segment_brains.values():
+            truth = brain.get_current_truth()
+            if truth:
+                preferred.update(truth.preferred_routes)
+                avoid.update(truth.avoid_zones)
+        rerouted = self.movement.apply_hive_truths(preferred, avoid, fraction=0.1, rng=self._rng)
+        if rerouted:
+            self._broadcast(
+                {"type": "phase", "phase": "reroute", "agents": rerouted,
+                 "avoid_zones": sorted(avoid)[:8]}
+            )
+
         if self._cog_events >= _REPORT_AFTER_EVENTS and not self._report_sent:
             self._report_sent = True
             await self._send_report()
@@ -334,6 +378,26 @@ class WorldSession:
 
             nodes, edges = self.roadnet.to_engine_graph()
             data: Dict[str, Any] = {"nodes": nodes, "edges": edges, "agent_count": 200}
+
+            # Pollution: live-first AQI with full seasonal intelligence
+            # (winter smog, stubble window, Diwali spikes, diurnal curve).
+            sim_now = self._sim_datetime()
+            aqi = await self.aqi_series.current(now=sim_now)
+            self._broadcast({"type": "aqi", **aqi, "sim_clock": _fmt_clock(self.clock0_s + self.sim_s)})
+            data["baseline_pm25"] = aqi["pm25"]
+            data["pm25_data_source"] = aqi["source"]
+            data["season"] = "winter" if sim_now.month in (11, 12, 1, 2) else (
+                "monsoon" if sim_now.month in (7, 8) else "summer"
+            )
+
+            # Policy pack (honest limits: engines flag when a pack is absent).
+            from world.policy import load_policy_pack
+
+            pack = load_policy_pack(self.profile.policy_pack)
+            if pack is not None:
+                data["policy_pack"] = pack
+            else:
+                data["policy_pack_missing"] = True
             if self.profile.country == "IN":
                 try:
                     from agents.ncr_data_loader import get_ncr_summary
@@ -447,25 +511,19 @@ async def create_session(
     wp = weather_provider or WeatherProvider()
     weather = wp.apply_override(await wp.fetch(profile), conditions)
 
-    # Agent specs: sentinels first (stable frame indices), swarm sampled from
-    # the region's real mode split across the 7 population segments.
-    from shared.contracts.simulation_state import SEGMENT_LABELS
+    # Agent specs from income-strata personas: sentinels first (stable frame
+    # indices), everyone shaped by the region's real income/mode structure.
+    from world.personas import PersonaSampler
 
-    rng = random.Random(seed)
-    segments = list(SEGMENT_LABELS)
-    modes = list(profile.mode_split)
-    weights = [profile.mode_split[m] for m in modes]
     sentinels = max(1, min(int(sentinels), 70, agent_count))
+    personas = PersonaSampler(profile, seed=seed).sample(agent_count)
     specs: List[Dict[str, Any]] = [
-        {"mode": "car", "agent_class": 1, "segment": segments[i % len(segments)]}
-        for i in range(sentinels)
-    ] + [
         {
-            "mode": rng.choices(modes, weights=weights)[0],
-            "agent_class": 0,
-            "segment": rng.choice(segments),
+            "mode": p.mode if i >= sentinels else "car",
+            "agent_class": 1 if i < sentinels else 0,
+            "segment": p.segment,
         }
-        for _ in range(max(0, agent_count - sentinels))
+        for i, p in enumerate(personas)
     ]
 
     # Hive cognition on the small corridor graph (LLM vocabulary stays tiny).
@@ -485,6 +543,11 @@ async def create_session(
     swarm.sentinel_count_per_segment = max(1, sentinels // 7)
     await swarm.initialize()
 
+    # Sentinels reason as PEOPLE: income stratum, mode, WFH ability flow into
+    # every LLM round via the request context.
+    for sentinel_agent, persona in zip(swarm.sentinel_agents, personas):
+        sentinel_agent.persona_context = persona.sentinel_context()
+
     scenario = build_scenario_from_prompt(prompt, city=profile.key)
     swarm.apply_interventions(
         [{"name": iv.name, "parameters": iv.parameters} for iv in scenario.interventions]
@@ -495,6 +558,25 @@ async def create_session(
         roadnet, profile, specs, seed=seed, start_clock=start_clock
     )
     movement.set_weather(weather)
+
+    # Live traffic calibration when a TomTom key is configured: the observed
+    # current/free-flow speed ratio scales both the movement layer and (via
+    # live_context, already plumbed) the swarm's flow map.
+    if os.getenv("TOMTOM_API_KEY"):
+        try:
+            from data_integration.adapters.api_adapter import TomTomFlowAdapter
+
+            result = await TomTomFlowAdapter().fetch(
+                lat=profile.center[1], lon=profile.center[0]
+            )
+            tomtom = getattr(result, "data", None) or {}
+            cur, free = tomtom.get("current_speed"), tomtom.get("free_flow_speed")
+            if cur and free:
+                movement.calibrate_speed(cur / max(free, 1))
+                swarm.live_context["tomtom"] = tomtom
+                swarm._init_flow_map_from_context()
+        except Exception:
+            logger.warning("TomTom calibration skipped", exc_info=True)
 
     session = WorldSession(
         session_id=str(uuid.uuid4())[:8],

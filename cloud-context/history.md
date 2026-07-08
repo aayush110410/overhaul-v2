@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-07-08 — Session: Living World Phase 5 (engine depth)
+
+### Phase 5 — complete; suite 252 passed / 2 skipped (+20)
+- **Added** `engines/environment/aqi_model.py` — `AQISeries`: CPCB PM2.5 sub-index (`pm25_to_aqi`), seasonal intelligence (winter-inversion month factors from the profile, monsoon washout, **stubble window Oct 15–Nov 30 gated to Indo-Gangetic latitudes**, **Diwali date table 2024–2030** with ±2-day decay and region-calendar spike magnitude, diurnal double-hump), `forecast_hourly`, live-first `current()` via keyless open-meteo AQI adapter with seasonal-model fallback. 9 tests (Diwali dominates its week; NYC stays clean; monsoon vs winter ratio > 2.5×).
+- **Added** `world/personas.py` — 6 India income strata (behavior signatures: mode propensities, departure discipline, weather sensitivity, WFH ability) + `SEGMENT_MAP` onto the 7 population segments; **mode choice = stratum propensity × regional availability (multiplicative, renormalized)** so scooters dominate Noida but stay rare in Manhattan. `PersonaSampler` deterministic; `Persona.sentinel_context()` feeds LLM prompts. 6 tests (±3pp distribution match; income shapes car share >3×; region sensitivity).
+- **Added** `data/policy_packs/{noida,delhi,new_york}.json` + `world/policy.py` — dated, sourced, confidence-tagged facts (GRAP stages, 10/15-yr vehicle bans, NOIDA leasehold land model, Master Plan 2031/MPD-2041, congestion pricing, LL97, MV Act 2019; budget headline numbers marked order-of-magnitude with as_of dates). **EconomicEngine** consumes the pack (confidence 0.55→0.62, land/budget/acts into metadata) and warns + discounts (0.45) when a region has no pack — honest limits by design. 3 tests.
+- **Added** hive→movement feedback — `MovementSim.apply_hive_truths(preferred, avoid, fraction)`: corridor-truth ids expand to member edges, punitive/bonus BPR flows re-route a 10% swarm sample mid-trip; wired into `WorldSession._cognitive_event` (broadcasts `phase:reroute`). 2 tests (avoid-zone empties its edges on the square-graph fixture).
+- **Wired** sessions: `create_session` samples PersonaSampler specs (modes/segments now income-driven); sentinel `persona_context` merged into every `ReasonRequest` (swarm.py context build); `_refresh_engines` now streams `aqi` messages (live-first, seasonal fallback), passes seasonally-adjusted `baseline_pm25` + `season` + `pm25_data_source` to the EnvironmentEngine, and attaches the region policy pack (or `policy_pack_missing`); `_sim_datetime()` honors prompt date contexts (**"diwali" prompts simulate the actual Diwali date**); TomTom calibration hook when `TOMTOM_API_KEY` present (`movement.calibrate_speed` + swarm flow map).
+- **Fixed en route**: `**getattr(...) or {}` unpack precedence SyntaxError caught by tests before commit.
+
 ## 2026-07-08 — Session: Living World Phase 4 (visible weather + atmosphere)
 
 ### Push unblocked + PR opened

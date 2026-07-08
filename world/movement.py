@@ -168,6 +168,55 @@ class MovementSim:
     def set_weather(self, state: WeatherState) -> None:
         self._weather_factor = WeatherProvider.speed_factor(state)
 
+    def calibrate_speed(self, factor: float) -> None:
+        """Live-data calibration (e.g. TomTom current/free-flow speed ratio)."""
+        self._drive_factor *= max(0.5, min(float(factor), 1.1))
+
+    def apply_hive_truths(
+        self,
+        preferred: Any,
+        avoid: Any,
+        fraction: float = 0.1,
+        rng: Optional[random.Random] = None,
+    ) -> int:
+        """Re-route a sample of the swarm using the hive's CollectiveTruth.
+
+        `preferred`/`avoid` are corridor edge ids ("u->v"); they expand to the
+        member movement edges assigned at init. Avoided edges get a punitive
+        BPR flow, preferred ones a free-flow bonus, and up to ``fraction`` of
+        en-route swarm agents re-plan the remainder of their trip. Returns the
+        number of agents whose route actually changed.
+        """
+        members = self._corridor_members
+        avoid_edges = {eid for cid in (avoid or []) for eid in members.get(cid, [])}
+        pref_edges = {eid for cid in (preferred or []) for eid in members.get(cid, [])}
+        if not avoid_edges and not pref_edges:
+            return 0
+        congestion: Dict[str, float] = {}
+        for e in self.roadnet.edges:
+            if e["id"] in avoid_edges:
+                congestion[e["id"]] = e["capacity"] * 3.0
+            elif e["id"] in pref_edges:
+                congestion[e["id"]] = 0.0
+        rng = rng or random.Random(0)
+        rerouted = 0
+        for agent in self.agents:
+            if agent.agent_class == 1 or agent.state == "arrived":
+                continue
+            if rng.random() > fraction:
+                continue
+            current = agent.route[agent.edge_i]
+            rest = self.roadnet.route(current["v"], agent.dest, congestion)
+            if not rest:
+                continue
+            new_route = agent.route[: agent.edge_i + 1] + rest
+            if [e["id"] for e in new_route] == [e["id"] for e in agent.route]:
+                continue
+            agent.route = new_route
+            agent.dest = new_route[-1]["v"]
+            rerouted += 1
+        return rerouted
+
     def edge_occupancy(self) -> Dict[str, int]:
         """Live count of en-route agents per edge id."""
         return dict(self._occupancy)

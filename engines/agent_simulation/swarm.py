@@ -509,6 +509,9 @@ class UrbanSwarm:
                             "destination": s.destination,
                             "mood": truth.segment_mood if truth else "stable",
                             "preferred": list(truth.preferred_routes) if truth else [],
+                            # Optional human-persona enrichment (income stratum,
+                            # mode, WFH ability) set by the world session.
+                            **(getattr(s, "persona_context", None) or {}),
                         },
                         kind="sentinel",
                     )

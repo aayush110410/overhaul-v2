@@ -1,0 +1,21 @@
+{
+  "key": "ncr",
+  "display_name": "Delhi NCR",
+  "country": "IN",
+  "center": [77.25, 28.55],
+  "bbox": [77.02, 28.35, 77.48, 28.72],
+  "timezone": "Asia/Kolkata",
+  "rush_hours": [[8, 11], [17, 21]],
+  "driving_style": {"speed_factor": 0.83, "lane_discipline": 0.35, "two_wheeler_share": 0.40},
+  "signals": {"avg_cycle_s": 120, "green_split": 0.44},
+  "income_distribution": {"lt_3L": 0.24, "3_5L": 0.20, "5_10L": 0.24, "10_20L": 0.17, "20L_1Cr": 0.12, "gt_1Cr": 0.03},
+  "mode_split": {"car": 0.21, "two_wheeler": 0.35, "auto": 0.11, "bus": 0.21, "walk": 0.12},
+  "aqi_baseline": {"annual_mean_pm25": 98, "winter_multiplier": 1.9, "monsoon_multiplier": 0.55},
+  "cultural_calendar": [
+    {"name": "Diwali", "date": "2026-11-08", "aqi_spike": 2.4, "evening_traffic_multiplier": 1.5},
+    {"name": "New Year's Eve", "date": "2026-12-31", "aqi_spike": 1.2, "evening_traffic_multiplier": 1.3}
+  ],
+  "policy_pack": "delhi",
+  "gazetteer": ["ncr", "delhi ncr", "national capital region"],
+  "sources": ["Blend of member-city profiles (noida/delhi/gurugram/ghaziabad/faridabad)"]
+}

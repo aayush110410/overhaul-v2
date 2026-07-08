@@ -1,0 +1,20 @@
+{
+  "key": "faridabad",
+  "display_name": "Faridabad, Haryana",
+  "country": "IN",
+  "center": [77.318, 28.409],
+  "bbox": [77.24, 28.33, 77.40, 28.49],
+  "timezone": "Asia/Kolkata",
+  "rush_hours": [[8, 11], [17, 21]],
+  "driving_style": {"speed_factor": 0.82, "lane_discipline": 0.32, "two_wheeler_share": 0.44},
+  "signals": {"avg_cycle_s": 115, "green_split": 0.45},
+  "income_distribution": {"lt_3L": 0.29, "3_5L": 0.22, "5_10L": 0.23, "10_20L": 0.15, "20L_1Cr": 0.09, "gt_1Cr": 0.02},
+  "mode_split": {"car": 0.17, "two_wheeler": 0.41, "auto": 0.12, "bus": 0.19, "walk": 0.11},
+  "aqi_baseline": {"annual_mean_pm25": 96, "winter_multiplier": 1.8, "monsoon_multiplier": 0.55},
+  "cultural_calendar": [
+    {"name": "Diwali", "date": "2026-11-08", "aqi_spike": 2.3, "evening_traffic_multiplier": 1.5}
+  ],
+  "policy_pack": "faridabad",
+  "gazetteer": ["faridabad", "ballabhgarh", "surajkund", "nit faridabad"],
+  "sources": ["HSPCB station means", "Census-derived strata estimates"]
+}

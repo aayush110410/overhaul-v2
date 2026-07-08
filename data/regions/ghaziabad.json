@@ -1,0 +1,20 @@
+{
+  "key": "ghaziabad",
+  "display_name": "Ghaziabad, Uttar Pradesh",
+  "country": "IN",
+  "center": [77.454, 28.669],
+  "bbox": [77.36, 28.60, 77.54, 28.74],
+  "timezone": "Asia/Kolkata",
+  "rush_hours": [[8, 11], [17, 21]],
+  "driving_style": {"speed_factor": 0.80, "lane_discipline": 0.30, "two_wheeler_share": 0.45},
+  "signals": {"avg_cycle_s": 120, "green_split": 0.45},
+  "income_distribution": {"lt_3L": 0.30, "3_5L": 0.22, "5_10L": 0.23, "10_20L": 0.14, "20L_1Cr": 0.09, "gt_1Cr": 0.02},
+  "mode_split": {"car": 0.18, "two_wheeler": 0.40, "auto": 0.13, "bus": 0.19, "walk": 0.10},
+  "aqi_baseline": {"annual_mean_pm25": 102, "winter_multiplier": 1.9, "monsoon_multiplier": 0.55},
+  "cultural_calendar": [
+    {"name": "Diwali", "date": "2026-11-08", "aqi_spike": 2.4, "evening_traffic_multiplier": 1.5}
+  ],
+  "policy_pack": "ghaziabad",
+  "gazetteer": ["ghaziabad", "indirapuram", "vaishali", "raj nagar", "kaushambi", "sahibabad"],
+  "sources": ["UPPCB station means", "Census-derived strata estimates"]
+}

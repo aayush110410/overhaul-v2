@@ -1,0 +1,22 @@
+{
+  "key": "new_york",
+  "display_name": "New York City",
+  "country": "US",
+  "center": [-73.986, 40.748],
+  "bbox": [-74.03, 40.68, -73.92, 40.82],
+  "timezone": "America/New_York",
+  "rush_hours": [[7, 10], [16, 19]],
+  "driving_style": {"speed_factor": 0.95, "lane_discipline": 0.90, "two_wheeler_share": 0.02},
+  "signals": {"avg_cycle_s": 90, "green_split": 0.50},
+  "income_distribution": {"lt_3L": 0.16, "3_5L": 0.18, "5_10L": 0.24, "10_20L": 0.22, "20L_1Cr": 0.15, "gt_1Cr": 0.05},
+  "mode_split": {"car": 0.26, "two_wheeler": 0.02, "auto": 0.08, "bus": 0.42, "walk": 0.22},
+  "aqi_baseline": {"annual_mean_pm25": 9.5, "winter_multiplier": 1.15, "monsoon_multiplier": 0.90},
+  "cultural_calendar": [
+    {"name": "Independence Day", "date": "2026-07-04", "aqi_spike": 1.7, "evening_traffic_multiplier": 1.25},
+    {"name": "New Year's Eve", "date": "2026-12-31", "aqi_spike": 1.1, "evening_traffic_multiplier": 1.4}
+  ],
+  "policy_pack": "new_york",
+  "gazetteer": ["new york", "new york city", "nyc", "manhattan", "brooklyn", "queens", "bronx", "times square", "midtown manhattan"],
+  "sources": ["EPA AirNow NYC annual PM2.5", "NYC DOT mobility report estimates; income tiers are RELATIVE local bands, not INR"],
+  "notes": "income_distribution keys are schema-stable strata labels; outside India they represent relative local income tiers (low->top)."
+}

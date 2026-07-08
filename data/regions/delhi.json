@@ -1,0 +1,21 @@
+{
+  "key": "delhi",
+  "display_name": "Delhi",
+  "country": "IN",
+  "center": [77.209, 28.614],
+  "bbox": [77.10, 28.52, 77.32, 28.72],
+  "timezone": "Asia/Kolkata",
+  "rush_hours": [[8, 11], [17, 21]],
+  "driving_style": {"speed_factor": 0.80, "lane_discipline": 0.35, "two_wheeler_share": 0.38},
+  "signals": {"avg_cycle_s": 130, "green_split": 0.42},
+  "income_distribution": {"lt_3L": 0.22, "3_5L": 0.19, "5_10L": 0.24, "10_20L": 0.19, "20L_1Cr": 0.13, "gt_1Cr": 0.03},
+  "mode_split": {"car": 0.19, "two_wheeler": 0.32, "auto": 0.10, "bus": 0.25, "walk": 0.14},
+  "aqi_baseline": {"annual_mean_pm25": 105, "winter_multiplier": 2.0, "monsoon_multiplier": 0.50},
+  "cultural_calendar": [
+    {"name": "Diwali", "date": "2026-11-08", "aqi_spike": 2.5, "evening_traffic_multiplier": 1.5},
+    {"name": "Republic Day", "date": "2026-01-26", "aqi_spike": 1.0, "evening_traffic_multiplier": 0.7}
+  ],
+  "policy_pack": "delhi",
+  "gazetteer": ["delhi", "new delhi", "connaught place", "chandni chowk", "south delhi", "karol bagh", "dwarka", "rohini", "ito delhi", "india gate"],
+  "sources": ["CPCB Delhi network annual means", "DDA/Census-derived strata estimates"]
+}

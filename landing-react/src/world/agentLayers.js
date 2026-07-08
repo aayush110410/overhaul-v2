@@ -106,11 +106,18 @@ const MOOD_COLORS = {
   panicked: [255, 80, 80],
 }
 
+const DAY_MATERIAL = { ambient: 0.45, diffuse: 0.7, shininess: 40, specularColor: [200, 200, 220] }
+const NIGHT_MATERIAL = { ambient: 0.85, diffuse: 0.35, shininess: 60, specularColor: [255, 240, 200] }
+const HEADLIGHT_MODES = new Set(['car', 'auto', 'bus', 'freight', 'two_wheeler'])
+const HEADLIGHT_OFFSET_M = 2.4
+
 /**
  * Build the deck.gl layer stack for one render tick.
  * `agents` is the mutable dead-reckoned array; `tick` invalidates accessors.
+ * `night` brightens materials and adds headlight glows so traffic reads
+ * against the dark basemap.
  */
-export function buildAgentLayers({ agents, tick, sentinelMoods = {}, onSentinelClick, sizeScale = 2.5 }) {
+export function buildAgentLayers({ agents, tick, sentinelMoods = {}, onSentinelClick, sizeScale = 2.5, night = false }) {
   const layers = []
   const byMode = new Map()
   const sentinels = []
@@ -136,8 +143,37 @@ export function buildAgentLayers({ agents, tick, sentinelMoods = {}, onSentinelC
         getOrientation: (d) => [0, 90 - d.bearing, 0],
         getColor: (d) => colorFor(d, d.idx),
         sizeScale,
+        material: night ? NIGHT_MATERIAL : DAY_MATERIAL,
         pickable: false,
         updateTriggers: { getPosition: tick, getOrientation: tick, getColor: tick },
+      }),
+    )
+  }
+
+  if (night) {
+    const lit = []
+    for (const [mode, data] of byMode) {
+      if (!HEADLIGHT_MODES.has(mode)) continue
+      for (const d of data) lit.push(d)
+    }
+    layers.push(
+      new ScatterplotLayer({
+        id: 'headlights',
+        data: lit,
+        getPosition: (d) => {
+          const rad = (d.bearing * Math.PI) / 180
+          return [
+            d.lon + (HEADLIGHT_OFFSET_M * Math.sin(rad)) / (111320 * Math.cos((d.lat * Math.PI) / 180)),
+            d.lat + (HEADLIGHT_OFFSET_M * Math.cos(rad)) / 110540,
+          ]
+        },
+        getRadius: 1.6,
+        radiusUnits: 'meters',
+        radiusMinPixels: 1,
+        getFillColor: [255, 244, 200, 210],
+        stroked: false,
+        pickable: false,
+        updateTriggers: { getPosition: tick },
       }),
     )
   }

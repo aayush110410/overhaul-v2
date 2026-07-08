@@ -177,6 +177,9 @@ class WorldSession:
                 "bbox": self.profile.bbox,
                 "timezone": self.profile.timezone,
                 "country": self.profile.country,
+                # Annual-mean baseline for the UI's smog-haze tint (live AQI
+                # streaming lands with the Phase-5 AQI model).
+                "aqi_baseline": self.profile.aqi_baseline,
             },
             "conditions": self.conditions.to_dict(),
             "weather": self.weather.to_dict(),

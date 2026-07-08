@@ -9,6 +9,7 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import { MapboxOverlay } from '@deck.gl/mapbox'
 import { useWorldSocket } from './world/useWorldSocket'
 import { buildAgentLayers } from './world/agentLayers'
+import { applyWeatherToMap, hazeOpacity, rainBucket, supportsNativePrecip } from './world/weatherFx'
 import './WorldCommand.css'
 
 const MAPBOX_TOKEN = (import.meta.env.VITE_MAPBOX_TOKEN || '').trim()
@@ -55,6 +56,8 @@ export default function WorldCommand() {
   const tickRef = useRef(0)
   const moodsRef = useRef({})
   const presetRef = useRef('day')
+  const [night, setNight] = useState(false)
+  const [nativePrecip, setNativePrecip] = useState(false)
 
   // Latest mood per sentinel index (for beacon colors + panel).
   useEffect(() => {
@@ -84,6 +87,7 @@ export default function WorldCommand() {
       const overlay = new MapboxOverlay({ interleaved: false, layers: [] })
       map.addControl(overlay)
       overlayRef.current = overlay
+      setNativePrecip(supportsNativePrecip(map))
     })
     mapRef.current = map
     return () => {
@@ -92,6 +96,11 @@ export default function WorldCommand() {
       mapRef.current = null
     }
   }, [])
+
+  // Weather → map visuals (same WeatherState that slows the traffic).
+  useEffect(() => {
+    if (world.weather && mapRef.current) applyWeatherToMap(mapRef.current, world.weather)
+  }, [world.weather, nativePrecip])
 
   // ── render loop: dead-reckon + rebuild layers + day/night preset ──
   useEffect(() => {
@@ -103,19 +112,23 @@ export default function WorldCommand() {
       last = now
       world.deadReckon(dt)
       tickRef.current += 1
+      const clock = (world.hello?.sim_clock_s || 0) + world.simTimeRef.current
+      const preset = lightPresetFor(clock)
       overlayRef.current?.setProps({
         layers: buildAgentLayers({
           agents: world.agentsRef.current,
           tick: tickRef.current,
           sentinelMoods: moodsRef.current,
           onSentinelClick: setSentinelIdx,
+          night: preset === 'night' || preset === 'dusk',
         }),
       })
-      const clock = (world.hello?.sim_clock_s || 0) + world.simTimeRef.current
-      const preset = lightPresetFor(clock)
-      if (preset !== presetRef.current && mapRef.current) {
+      if (preset !== presetRef.current) {
         presetRef.current = preset
-        try { mapRef.current.setConfigProperty('basemap', 'lightPreset', preset) } catch { /* ignore */ }
+        setNight(preset === 'night' || preset === 'dusk')
+        if (mapRef.current) {
+          try { mapRef.current.setConfigProperty('basemap', 'lightPreset', preset) } catch { /* ignore */ }
+        }
       }
       raf = requestAnimationFrame(loop)
     }
@@ -197,6 +210,19 @@ export default function WorldCommand() {
           <strong>World failed to start.</strong> {world.error}
           <button onClick={() => window.location.reload()}>reset</button>
         </div>
+      )}
+
+      {/* ── atmosphere overlays (CSS rain when native GPU rain unavailable; smog haze) ── */}
+      {live && !nativePrecip && rainBucket(wx) !== 'none' && (
+        <div className={`wc-rain wc-rain-${rainBucket(wx)}`} aria-hidden="true" data-testid="rain-overlay" />
+      )}
+      {live && hazeOpacity(world.hello?.region?.aqi_baseline) > 0 && (
+        <div
+          className={`wc-haze ${night ? 'wc-haze-night' : ''}`}
+          style={{ opacity: hazeOpacity(world.hello.region.aqi_baseline) }}
+          aria-hidden="true"
+          data-testid="haze-overlay"
+        />
       )}
 
       {/* ── live HUD ── */}

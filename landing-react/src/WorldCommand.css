@@ -72,6 +72,44 @@
 }
 .wc-suggestions button:hover { background: rgba(255, 255, 255, 0.12); color: #fff; }
 
+/* ── atmosphere: CSS rain fallback + smog haze ── */
+.wc-rain {
+  position: absolute; inset: 0; z-index: 8; pointer-events: none;
+  background-image:
+    repeating-linear-gradient(
+      100deg,
+      transparent 0 6px,
+      rgba(190, 205, 225, 0.28) 6px 7px,
+      transparent 7px 14px
+    ),
+    repeating-linear-gradient(
+      98deg,
+      transparent 0 11px,
+      rgba(170, 188, 210, 0.18) 11px 12px,
+      transparent 12px 23px
+    );
+  background-size: 100% 130px, 100% 210px;
+  animation: wc-rain-fall 0.45s linear infinite;
+  mix-blend-mode: screen;
+}
+.wc-rain-light { opacity: 0.45; }
+.wc-rain-heavy { opacity: 0.85; animation-duration: 0.28s; }
+@keyframes wc-rain-fall {
+  from { background-position: 0 0, 0 0; }
+  to { background-position: -26px 130px, -42px 210px; }
+}
+.wc-haze {
+  position: absolute; inset: 0; z-index: 7; pointer-events: none;
+  background:
+    radial-gradient(120% 90% at 50% 100%, rgba(154, 128, 90, 0.9), rgba(154, 128, 90, 0.35) 55%, transparent 85%);
+  mix-blend-mode: multiply;
+  transition: opacity 2s ease;
+}
+.wc-haze-night {
+  background:
+    radial-gradient(120% 90% at 50% 100%, rgba(96, 82, 60, 0.95), rgba(96, 82, 60, 0.4) 55%, transparent 85%);
+}
+
 /* ── starting / error ── */
 .wc-starting {
   position: absolute; inset: 0; z-index: 20; display: flex; flex-direction: column;

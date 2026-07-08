@@ -4,6 +4,19 @@
 
 ---
 
+## 2026-07-08 — Session: Living World Phase 4 (visible weather + atmosphere)
+
+### Push unblocked + PR opened
+- **Push succeeded** after user granted the GitHub App write access — branch `claude/ultraplan-agent-map-ui-md9ucq` live on origin. **Draft PR #1** opened: https://github.com/aayush110410/overhaul-v2/pull/1 (no CI configured on repo; PR watch check-in armed hourly).
+- Note: local commits remain unsigned — the container's signing key is a 0-byte stub (platform limitation, logged); identity is correct (`Claude <noreply@anthropic.com>`). Squash-merge via GitHub UI yields a verified merge commit.
+
+### Phase 4 — complete
+- **Added** `landing-react/src/world/weatherFx.js` — `applyWeatherToMap` (native `map.setRain`/`setSnow` when available: density/intensity/vignette ∝ precip, direction tilted by wind; fog densification + horizon blend ∝ cloud cover/visibility), `rainBucket`, `hazeOpacity` (annual PM2.5 baseline → 0–0.38 smog tint).
+- **Modified** `WorldCommand.jsx/.css` — weather effect wiring on every weather message; **CSS rain fallback overlay** (animated dual-layer streaks, light/heavy) when native precip unsupported (also = tokenless sandbox path); **smog haze overlay** (Noida-brown radial multiply blend, night variant) from `region.aqi_baseline`; day/night state now drives vehicle materials.
+- **Modified** `agentLayers.js` — night mode: brighter ambient material + **headlight glow layer** (warm dots offset 2.4 m along bearing for motorized modes).
+- **Modified** `world/session.py` — hello `region.aqi_baseline` (UI haze until Phase-5 live AQI streaming).
+- Physics/visuals agreement holds by construction: the same WeatherState drives `speed_factor` and the visuals.
+
 ## 2026-07-08 — Session: Living World Phase 3 (game-realistic map UI)
 
 ### Phase 3 — complete; browser-verified (0 app console errors)

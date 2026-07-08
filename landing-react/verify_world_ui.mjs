@@ -47,6 +47,14 @@ console.log('PANEL OK:', (await page.textContent('.wc-panel h3')).trim())
 
 await page.screenshot({ path: `${SCRATCH}/world-live.png` })
 
+// Phase 4: rain overlay (CSS fallback in tokenless env) + smog haze (Noida baseline 95)
+await page.waitForSelector('[data-testid="rain-overlay"]', { timeout: 5000 })
+console.log('RAIN OVERLAY OK:', await page.getAttribute('[data-testid="rain-overlay"]', 'class'))
+await page.waitForSelector('[data-testid="haze-overlay"]', { timeout: 5000 })
+const hazeOp = await page.$eval('[data-testid="haze-overlay"]', (el) => el.style.opacity)
+console.log('HAZE OVERLAY OK: opacity =', hazeOp)
+await page.screenshot({ path: `${SCRATCH}/world-weather.png` })
+
 // speed control roundtrip
 await page.click('.wc-speeds button:last-child')
 await page.waitForTimeout(1000)

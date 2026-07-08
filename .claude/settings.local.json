@@ -44,7 +44,8 @@
       "Bash(vercel whoami *)",
       "Bash(npm i *)",
       "Bash(cp \"26P019_Deepika Agarwal_Sanskriti.html\" index.html)",
-      "Bash(shasum \"26P019_Deepika Agarwal_Sanskriti.html\" index.html)"
+      "Bash(shasum \"26P019_Deepika Agarwal_Sanskriti.html\" index.html)",
+      "mcp__Claude_Code_Remote__send_later"
     ]
   },
   "enableAllProjectMcpServers": true,

@@ -4,6 +4,18 @@
 
 ---
 
+## 2026-07-07 — Session: Living World Phase 2 (live sessions + streaming)
+
+### Phase 2 — complete; suite 231 passed / 2 skipped
+- **Modified** `engines/agent_simulation/swarm.py` — injected-graph fixes: `_valid_edges` now derives from `self.edges` in `__init__` (identical 28-edge set on the default graph); added `_node_coords()` (reads `self.nodes`, falls back to NCR set) used by `build_hive_state`/`_build_geojson`; physics sentinel + swarm-agent call sites now pass `nodes`/`edges` through `state`.
+- **Fixed 2 more latent NCR-hardcoding bugs found by tests**: `agents/surgical_agent.py _dijkstra_physics_fallback` and `agents/swarm_agent.py _dijkstra_with_hive_weights` both routed on `_DEFAULT_NODES/_DEFAULT_EDGES` regardless of the swarm's graph AND crashed (KeyError) on unreachable destinations. Both now accept `nodes`/`edges` params (NCR default = back-compat) and degrade cleanly when unreachable (one-way dead ends are normal on real OSM graphs).
+- **Added** `world/stream.py` — binary frame codec (`pack_frame`/`unpack_frame`, 24 B header + 16 B/agent, spec in `shared/contracts/world_frame.md`) + `WS /ws/world/{id}` + SSE fallback `GET /world/{id}/stream` (frames ≤2 Hz decoded server-side), 20 s keepalive pings.
+- **Added** `world/session.py` — `WorldSession`: 10 Hz tick loop (60× sim-time default), 5 Hz binary frame broadcast, 1 Hz metrics, cognitive events every 30 sim-min (live corridor congestion → `swarm._flow_map` → ONE batched hive timestep; sentinel_thought messages per event), 7-engine refresh hourly sim-time (explicit engine list — the nested AgentSimulationEngine must not run), report after 3 events (+1 optional Gemini narrative when LLM on), MAX_SESSIONS=3 eviction, 15-min wall-clock cap, priority broadcast (JSON events evict stale frames on backpressure — frames are droppable, events are not). `create_session()` factory: resolver → roadnet → weather+override → mode-split-sampled agent specs (sentinels = frame indices 0..N-1) → UrbanSwarm on the corridor graph.
+- **Added** `app.py` endpoints — `POST /world/start` (no `_VALID_CITIES` gate; 503 on `RoadNetworkUnavailable`), `GET /world/{id}/state`, `POST /world/{id}/stop`; `world_stream_router` included after imagen router.
+- **Added** tests: `tests/world/test_frame_codec.py` (5), `tests/world/test_session.py` (6), `tests/engines/agent_simulation/test_injected_graph.py` (4).
+- **Verified end-to-end**: uvicorn + WS smoke — prompt "what if it rains during rush hour in noida" → region noida, rain 8 mm/h override, sim clock 08:30, 200 agents streaming at 5 Hz, 87 moving (staggered rush-hour departures), clean stop.
+- **Noted for Phase 3 (user request)**: consider React Bits components (`npx shadcn@latest add @react-bits/Aurora-TS-TW`) for UI polish, e.g. the Aurora background on idle/landing states of `/world`.
+
 ## 2026-07-06 — Session: Living World (Phase 0 + Phase 1)
 
 ### Phase 0

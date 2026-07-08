@@ -143,8 +143,10 @@ class UrbanSwarm:
         # (legacy /simulate/agent-based). When True, sentinels + brains reason
         # through the ReasoningGateway (the real Sentinel-Swarm-Hive).
         self.enable_llm = False
+        # LLM edge vocabulary derives from THIS graph (identical to the frozen
+        # NCR set on the default graph; correct on injected road networks).
         self._gateway = None
-        self._valid_edges = None
+        self._valid_edges = frozenset(f"{e['u']}->{e['v']}" for e in self.edges)
         self._sentinel_provider = None
         self.policy_agent: Optional[PolicyAgent] = None
         # Sentinels per segment (7 segments). 7 => 49 sentinels (production);
@@ -247,10 +249,9 @@ class UrbanSwarm:
         # Wire the reasoning gateway BEFORE creating sentinels so they receive a
         # real provider. Without enable_llm the loop stays pure physics.
         if self.enable_llm:
-            from reasoning import get_gateway, make_sentinel_provider, valid_edge_ids
+            from reasoning import get_gateway, make_sentinel_provider
 
             self._gateway = get_gateway()
-            self._valid_edges = valid_edge_ids()
             self._sentinel_provider = make_sentinel_provider(self._gateway, self._valid_edges)
 
         self._create_segment_brains()
@@ -539,7 +540,13 @@ class UrbanSwarm:
                 brain = self.segment_brains.get(sentinel.segment_name)
                 truth = brain.get_current_truth() if brain else None
                 discovery = await sentinel._physics_fallback(
-                    {"flow_map": self._flow_map, "timestep": step}, truth
+                    {
+                        "flow_map": self._flow_map,
+                        "timestep": step,
+                        "nodes": list(self.nodes.keys()),
+                        "edges": self.edges,
+                    },
+                    truth,
                 )
                 sentinel.last_decision = discovery
                 if brain is not None:
@@ -596,7 +603,11 @@ class UrbanSwarm:
                 origin=agent.origin,
                 destination=agent.destination,
             ).choose_route(
-                state={"flow_map": self._flow_map},
+                state={
+                    "flow_map": self._flow_map,
+                    "nodes": list(self.nodes.keys()),
+                    "edges": self.edges,
+                },
                 collective_truth=collective_truth,
             )
 
@@ -870,10 +881,17 @@ class UrbanSwarm:
             LOGGER.warning("Policy broadcast skipped: %s", exc)
 
     # ── Contract assembly (SimulationState pieces) ──────────────────────
+    def _node_coords(self, node_id: str) -> Optional[List[float]]:
+        """[lon, lat] for a node of THIS graph, falling back to the NCR set."""
+        n = self.nodes.get(node_id)
+        if n and "lon" in n and "lat" in n:
+            return [n["lon"], n["lat"]]
+        from reasoning import node_coords
+        return node_coords(node_id)
+
     def build_hive_state(self) -> Dict[str, Any]:
         """Assemble brains[], sentinels[], and geojson for the SimulationState
         contract from real distilled truth + real sentinel decisions."""
-        from reasoning import node_coords
         from shared.contracts.simulation_state import SEGMENT_LABELS
 
         brains: List[Dict[str, Any]] = []
@@ -894,7 +912,7 @@ class UrbanSwarm:
 
         sentinels: List[Dict[str, Any]] = []
         for s in self.sentinel_agents:
-            coords = node_coords(s.origin) or node_coords(s.destination)
+            coords = self._node_coords(s.origin) or self._node_coords(s.destination)
             if not coords:
                 continue
             dec = getattr(s, "last_decision", None) or {}
@@ -921,8 +939,6 @@ class UrbanSwarm:
 
     def _build_geojson(self) -> Dict[str, Any]:
         """FeatureCollection of congestion-colored road edges from final flows."""
-        from reasoning import node_coords
-
         features: List[Dict[str, Any]] = []
         seen = set()
         for edge in self.edges:
@@ -933,7 +949,7 @@ class UrbanSwarm:
             eid = f"{edge['u']}->{edge['v']}"
             flow = self._flow_map.get(eid, edge["capacity"] * 0.6)
             congestion = round(flow / max(edge["capacity"], 1), 3)
-            a, b = node_coords(edge["u"]), node_coords(edge["v"])
+            a, b = self._node_coords(edge["u"]), self._node_coords(edge["v"])
             if not a or not b:
                 continue
             features.append(

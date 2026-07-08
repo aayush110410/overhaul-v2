@@ -41,6 +41,8 @@ def _dijkstra_with_hive_weights(
     avoid_zones: Optional[List[str]] = None,
     preferred_zones: Optional[List[str]] = None,
     segment_name: str = "default",
+    nodes: Optional[List[str]] = None,
+    edges: Optional[List[Dict[str, Any]]] = None,
 ) -> Dict[str, Any]:
     """Dijkstra shortest path with hive collective weights applied.
 
@@ -60,8 +62,11 @@ def _dijkstra_with_hive_weights(
     Returns:
         Dict with path (list of edges), travel_time_min, total_dist_km.
     """
-    nodes = list(_DEFAULT_NODES.keys())
-    edges = list(_DEFAULT_EDGES)
+    # Route on the injected graph when provided; NCR default keeps legacy behavior.
+    nodes = list(nodes) if nodes is not None else list(_DEFAULT_NODES.keys())
+    edges = list(edges) if edges is not None else list(_DEFAULT_EDGES)
+    if origin not in nodes or destination not in nodes:
+        return {"travel_time_min": float("inf"), "path": [], "total_dist_km": 0.0}
 
     avoid_zones = avoid_zones or []
     preferred_zones = preferred_zones or []
@@ -106,7 +111,8 @@ def _dijkstra_with_hive_weights(
                 prev[v] = (u, edge)
                 heapq.heappush(pq, (nd, v))
 
-    if dist[destination] == float("inf"):
+    if dist.get(destination, float("inf")) == float("inf"):
+        # Unreachable (one-way dead ends on real road graphs) — degrade cleanly.
         return {"travel_time_min": float("inf"), "path": [], "total_dist_km": 0.0}
 
     # Reconstruct path
@@ -186,6 +192,8 @@ class SwarmAgent:
             avoid_zones=avoid_zones,
             preferred_zones=preferred_zones,
             segment_name=self.segment_name,
+            nodes=state.get("nodes"),
+            edges=state.get("edges"),
         )
 
         return result

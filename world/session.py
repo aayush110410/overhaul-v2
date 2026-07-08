@@ -157,6 +157,12 @@ class WorldSession:
                 except (asyncio.QueueEmpty, asyncio.QueueFull):
                     pass
 
+    def set_speed(self, speed: int) -> int:
+        """Runtime time-dilation control (0 pauses; clamped to ≤600×)."""
+        self.speed = max(0, min(int(speed), 600))
+        self._broadcast({"type": "phase", "phase": "speed", "speed": self.speed})
+        return self.speed
+
     # ── public messages/state ──
 
     def hello_message(self) -> Dict[str, Any]:
@@ -188,6 +194,7 @@ class WorldSession:
         return {
             "session_id": self.session_id,
             "running": self.running,
+            "speed": self.speed,
             "region": self.profile.key,
             "sim_s": round(self.sim_s, 1),
             "sim_clock": _fmt_clock(self.clock0_s + self.sim_s),

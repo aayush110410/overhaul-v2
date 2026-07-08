@@ -4,6 +4,17 @@
 
 ---
 
+## 2026-07-08 — Session: Living World Phase 3 (game-realistic map UI)
+
+### Phase 3 — complete; browser-verified (0 app console errors)
+- **Added** `landing-react/src/world/frameCodec.js` — DataView decoder mirroring `world/stream.py` (magic check, 16 B/agent).
+- **Added** `landing-react/src/world/useWorldSocket.js` — session hook: `POST /world/start` → WS binary+JSON dispatch, exponential-backoff reconnect (3 tries) → EventSource SSE fallback, mutable `agentsRef` + **dead-reckoning** (`deadReckon(dt)` advances displayed positions by speed×bearing×session-speed between 5 Hz frames → smooth 60 fps), speed control (`POST /world/{id}/speed`), thought ring buffer, stop/cleanup.
+- **Added** `landing-react/src/world/agentLayers.js` — procedural low-poly meshes (car/two-wheeler/auto/bus/pedestrian/freight + sentinel beacon; +X-forward boxes, real-meter sizes), realistic per-mode paint palettes w/ brake-red queued tint, one `SimpleMeshLayer` per mode, pickable sentinel beacons (mood-colored) + pulsing halo.
+- **Added** `landing-react/src/WorldCommand.jsx` + `.css`, route `/world` in `main.jsx` (`/hive` untouched) — **Mapbox Standard** photoreal style w/ `lightPreset` (dawn/day/dusk/night) driven by the sim clock; cinematic `flyTo` on region resolve; idle hero w/ plain-CSS aurora backdrop (react-bits Aurora concept — repo has no tailwind, so no TS-TW drop-in); glass game-HUD: region+weather+clock chips, speed controls (⏸/1×/4×/10×), live metrics strip, sentinel-minds feed → thought panel, policy-brief panel; graceful no-token fallback.
+- **Added** backend runtime speed control: `WorldSession.set_speed` (0=pause, ≤600×) + `POST /world/{id}/speed` + test. Suite: 232 passed / 2 skipped.
+- **Fixed env**: repo `node_modules` were macOS-installed — added Linux natives (`@rollup/rollup-linux-x64-gnu`, `@esbuild/linux-x64`, `--no-save`).
+- **Verified** (Playwright, headless, no Mapbox token in sandbox): idle hero → prompt → "Noida, Uttar Pradesh · fallback roads", weather chip "rain · 25°C · 8 mm/h", metrics ticking (1500 on the move, 28 km/h, 94.1% congested), clock 08:31→08:34, sentinel thought "#13 high income · stable" + panel, 0 app console errors (only sandbox-blocked gtag/Google-Fonts externals). `npm run build` clean. Screenshots delivered to user. **Visual check of the 3D vehicles on a real token still pending — do on user's machine (Phase 4 verification).** Kept `landing-react/verify_world_ui.mjs` as the repeatable UI check.
+
 ## 2026-07-07 — Session: Living World Phase 2 (live sessions + streaming)
 
 ### Phase 2 — complete; suite 231 passed / 2 skipped

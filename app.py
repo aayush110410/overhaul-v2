@@ -2754,6 +2754,21 @@ async def world_state(session_id: str):
     return session.state_json()
 
 
+class WorldSpeedRequest(BaseModel):
+    speed: int = Field(..., ge=0, le=600)  # 0 pauses
+
+
+@app.post("/world/{session_id}/speed")
+async def world_speed(session_id: str, req: WorldSpeedRequest):
+    """Runtime time-dilation: 0 = pause, 60 = default, up to 600×."""
+    from world.session import SESSIONS
+
+    session = SESSIONS.get(session_id)
+    if session is None:
+        raise HTTPException(status_code=404, detail="unknown session")
+    return {"session_id": session_id, "speed": session.set_speed(req.speed)}
+
+
 @app.post("/world/{session_id}/stop")
 async def world_stop(session_id: str):
     from world.session import SESSIONS

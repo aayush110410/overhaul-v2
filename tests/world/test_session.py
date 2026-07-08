@@ -171,5 +171,18 @@ async def test_state_json_shape():
     session = await _make()
     state = session.state_json()
     assert state["region"] == "noida"
-    assert {"running", "sim_clock", "agents_total", "arrived", "avg_speed_kmh"} <= set(state)
+    assert {"running", "speed", "sim_clock", "agents_total", "arrived", "avg_speed_kmh"} <= set(state)
     await session.stop()
+
+
+@pytest.mark.asyncio
+async def test_set_speed_pauses_and_clamps():
+    session = await _make(speed=600)
+    await session.stop()
+    assert session.set_speed(0) == 0
+    before = session.sim_s
+    await session.step()
+    assert session.sim_s == before  # paused: sim time frozen
+    assert session.set_speed(9999) == 600  # clamped
+    await session.step()
+    assert session.sim_s > before

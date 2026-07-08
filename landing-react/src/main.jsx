@@ -14,6 +14,7 @@ const Founders = lazy(() => import('./Founders.jsx'))
 const FlyoverSim = lazy(() => import('./FlyoverSim.jsx'))
 const Demo2 = lazy(() => import('./Demo2.jsx'))
 const HiveCommand = lazy(() => import('./HiveCommand.jsx'))
+const WorldCommand = lazy(() => import('./WorldCommand.jsx'))
 
 const PrivacyPolicy = lazy(() => import('./Policies.jsx').then(m => ({ default: m.PrivacyPolicy })))
 const TermsConditions = lazy(() => import('./Policies.jsx').then(m => ({ default: m.TermsConditions })))
@@ -48,6 +49,7 @@ createRoot(document.getElementById('root')).render(
           <Route path="/demo" element={<Demo />} />
           <Route path="/demo2" element={<Demo2 />} />
           <Route path="/hive" element={<HiveCommand />} />
+          <Route path="/world" element={<WorldCommand />} />
           <Route path="/validation" element={<CustomerValidation />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/support" element={<Support />} />

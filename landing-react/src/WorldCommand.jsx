@@ -70,29 +70,52 @@ export default function WorldCommand() {
     if (world.report) setShowReport(true)
   }, [world.report])
 
-  // ── map init (once) ──
+  // ── map init (once): Mapbox Standard with a token, MapLibre + CARTO
+  // community raster tiles without one (weather/vehicle overlays work on both).
+  const [tokenless, setTokenless] = useState(false)
   useEffect(() => {
-    if (!MAPBOX_TOKEN || mapRef.current || !containerRef.current) return
-    const map = new mapboxgl.Map({
-      container: containerRef.current,
-      style: 'mapbox://styles/mapbox/standard',
-      center: [77.25, 28.55],
-      zoom: 3.2,
-      pitch: 0,
-      antialias: true,
-      attributionControl: false,
-    })
-    map.on('style.load', () => {
-      try { map.setConfigProperty('basemap', 'lightPreset', 'day') } catch { /* older style */ }
-      const overlay = new MapboxOverlay({ interleaved: false, layers: [] })
-      map.addControl(overlay)
-      overlayRef.current = overlay
-      setNativePrecip(supportsNativePrecip(map))
-    })
-    mapRef.current = map
+    if (mapRef.current || !containerRef.current) return
+    let cancelled = false
+    const init = async () => {
+      let map
+      if (MAPBOX_TOKEN) {
+        map = new mapboxgl.Map({
+          container: containerRef.current,
+          style: 'mapbox://styles/mapbox/standard',
+          center: [77.25, 28.55],
+          zoom: 3.2,
+          pitch: 0,
+          antialias: true,
+          attributionControl: false,
+        })
+      } else {
+        const maplibregl = (await import('maplibre-gl')).default
+        await import('maplibre-gl/dist/maplibre-gl.css')
+        const { cartoDarkOsmStyle } = await import('./maps/styles/cartoDarkOsmStyle')
+        if (cancelled || !containerRef.current) return
+        map = new maplibregl.Map({
+          container: containerRef.current,
+          style: cartoDarkOsmStyle,
+          center: [77.25, 28.55],
+          zoom: 3.2,
+          pitch: 0,
+        })
+        setTokenless(true)
+      }
+      map.on('style.load', () => {
+        try { map.setConfigProperty('basemap', 'lightPreset', 'day') } catch { /* not Standard */ }
+        const overlay = new MapboxOverlay({ interleaved: false, layers: [] })
+        map.addControl(overlay)
+        overlayRef.current = overlay
+        setNativePrecip(supportsNativePrecip(map))
+      })
+      mapRef.current = map
+    }
+    init()
     return () => {
+      cancelled = true
       overlayRef.current = null
-      map.remove()
+      mapRef.current?.remove()
       mapRef.current = null
     }
   }, [])
@@ -168,9 +191,7 @@ export default function WorldCommand() {
 
   return (
     <div className="wc-root">
-      {MAPBOX_TOKEN
-        ? <div ref={containerRef} className="wc-map" />
-        : <div className="wc-map wc-map-missing">Set VITE_MAPBOX_TOKEN to render the world map.</div>}
+      <div ref={containerRef} className="wc-map" />
 
       {/* ── idle hero ── */}
       {(world.status === 'idle' || world.status === 'ended') && (
@@ -241,6 +262,12 @@ export default function WorldCommand() {
               </div>
             )}
             <div className="wc-chip wc-clock">{world.metrics?.sim_clock || '—:—'}</div>
+            {tokenless && (
+              <div className="wc-chip wc-token-note"
+                title="No VITE_MAPBOX_TOKEN — using the community CARTO basemap (no 3D buildings / photoreal lighting)">
+                community basemap
+              </div>
+            )}
             <div className="wc-speeds">
               {SPEEDS.map((s) => (
                 <button

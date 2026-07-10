@@ -11,13 +11,7 @@
 }
 
 .wc-map { position: absolute; inset: 0; }
-.wc-map-missing {
-  display: flex; align-items: center; justify-content: center;
-  color: #7d8590; font-size: 0.95rem; letter-spacing: 0.02em;
-  background:
-    radial-gradient(1200px 600px at 70% 20%, #16203a 0%, transparent 60%),
-    #0b0e14;
-}
+.wc-token-note { color: #f0b429; font-size: 0.75rem; }
 
 /* ── idle hero with aurora backdrop (plain-CSS take on react-bits Aurora) ── */
 .wc-hero {

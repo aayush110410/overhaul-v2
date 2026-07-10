@@ -4,6 +4,15 @@
 
 ---
 
+## 2026-07-08 — Session: Living World Phase 6 (production hardening)
+
+### Phase 6 — complete; suite 254 passed / 2 skipped; browser-verified
+- **Adaptive frame rate** — `WorldSession.step` drops from 5 Hz to 3.3 Hz frames whenever any subscriber queue passes half-full (slow client backpressure); JSON events keep priority eviction.
+- **Added** `tests/world/test_world_e2e.py` — full-stack offline E2E (<25 s): REAL resolver/roadnet/weather/personas/session with all egress down → "diwali evening rush in Noida" resolves, NCR fallback graph, rain override, 10+ binary frames, metrics/aqi/sentinel_thought/report events, Diwali AQI > 200, clean stop. Plus a subscriber-churn chaos test (lazy + rapid attach/detach, session survives).
+- **Token-free basemap fallback** — added `maplibre-gl` dep; `/world` without `VITE_MAPBOX_TOKEN` now dynamically loads MapLibre + the dormant `cartoDarkOsmStyle` (CARTO raster) with the same deck.gl overlay, vehicles, weather CSS effects; "community basemap" chip flags the mode. Mapbox Standard photoreal path unchanged when a token exists.
+- **Docs** — README: Living World quickstart section + `/world/*` endpoints in the API table; PATH.md: 2026-07 Living World addendum under the migration plan (invariants upheld: no LLM in ticks, no mocks, contract-first).
+- **Gotcha logged**: `npm install --save <pkg>` prunes previously `--no-save`-installed packages (playwright vanished mid-verify; reinstalled).
+
 ## 2026-07-08 — Session: Living World Phase 5 (engine depth)
 
 ### Phase 5 — complete; suite 252 passed / 2 skipped (+20)

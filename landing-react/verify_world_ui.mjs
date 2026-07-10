@@ -59,7 +59,7 @@ await page.screenshot({ path: `${SCRATCH}/world-weather.png` })
 await page.click('.wc-speeds button:last-child')
 await page.waitForTimeout(1000)
 
-const fatal = errors.filter((e) => !/VITE_MAPBOX|googletagmanager|fonts.googleapis|ERR_TUNNEL_CONNECTION_FAILED|ERR_CONNECTION_RESET|mapbox/i.test(e))
+const fatal = errors.filter((e) => !/VITE_MAPBOX|googletagmanager|fonts.googleapis|cartocdn|ERR_TUNNEL_CONNECTION_FAILED|ERR_CONNECTION_RESET|mapbox/i.test(e))
 console.log('CONSOLE ERRORS:', fatal.length, fatal.slice(0, 5))
 await browser.close()
 if (fatal.length) {

@@ -259,7 +259,12 @@ class WorldSession:
         self.movement.tick(dt)
         self.sim_s += dt
 
-        if self._tick_i % _BROADCAST_EVERY_TICKS == 0:
+        # Adaptive frame rate: 5 Hz normally, 3.3 Hz when any subscriber's
+        # queue is falling behind (slow client / cold network) — frames are
+        # droppable, but sending fewer beats churning the queue.
+        backpressure = any(q.qsize() > _QUEUE_MAX // 2 for q in self._subscribers)
+        every = 3 if backpressure else _BROADCAST_EVERY_TICKS
+        if self._tick_i % every == 0:
             self._seq += 1
             self._broadcast(pack_frame(self._seq, self.sim_s, self.movement.agents))
         if self._tick_i % _METRICS_EVERY_TICKS == 0:

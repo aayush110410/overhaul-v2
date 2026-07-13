@@ -393,11 +393,11 @@ async def llm_ensemble(
 ) -> Dict[str, Any]:
     """Run the same prompt through multiple models in parallel and return all results.
 
-    This enables cross-validation: run Llama for analysis, GPT-OSS for verification,
+    This enables cross-validation: run Kimi for analysis, GPT-OSS for verification,
     and Qwen for a quick take — then compare/merge in the caller.
 
     Returns: {"model_name": "response_text", ...}
-    Default models: ["llama", "gpt_oss", "qwen"]
+    Default models: ["kimi", "gpt_oss", "qwen"]
     """
     cfg = cfg or load_llm_config()
     models = models or ["kimi", "gpt_oss", "qwen"]
@@ -422,7 +422,7 @@ async def llm_ensemble(
     # Filter to available models
     available = []
     for m in models:
-        if m in ("qwen", "llama", "gpt_oss") and qwen_enabled(cfg):
+        if m in ("qwen", "kimi", "gpt_oss") and qwen_enabled(cfg):
             available.append(m)
         elif m == "gemini" and gemini_enabled(cfg):
             available.append(m)

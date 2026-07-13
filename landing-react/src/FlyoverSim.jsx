@@ -11,7 +11,7 @@ if (MAPBOX_TOKEN) {
   mapboxgl.accessToken = MAPBOX_TOKEN;
 }
 
-const API_BASE = 'http://localhost:8001';
+const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:8001';
 
 // ============================================
 // CUSTOM CURSOR

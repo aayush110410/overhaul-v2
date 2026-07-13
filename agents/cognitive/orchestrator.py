@@ -17,7 +17,7 @@ Pipeline:
                             │          PARALLEL                 │
                             │  ┌──────────┐  ┌───────────┐    │
                             │  │ Reasoner │  │  Critic   │    │
-                            │  │ (Llama)  │  │ (GPT-OSS) │    │
+                            │  │ (Kimi)   │  │ (GPT-OSS) │    │
                             │  └──────────┘  └───────────┘    │
                             └─────────────────┬────────────────┘
                                               │
@@ -37,7 +37,7 @@ Model routing:
   Planner    → Heuristic         (instant, 0ms)
   Researcher → Data APIs         (parallel fetch, ~1s)
   Engines    → Python compute    (parallel, <2s)
-  Reasoner   → Llama 3.3 70B    (deep, ~5s)
+  Reasoner   → Kimi k2.6    (deep, ~5s)
   Critic     → GPT-OSS-120B     (validation, ~5s)
   Synthesizer→ Gemini 3.1 Pro   (synthesis, ~5s)
   Viz Output → Python compute    (instant, <0.1s)
@@ -385,7 +385,7 @@ class LDRAGOv2:
             elif role == "location_resolver":
                 models["location"] = "nominatim/ncr_landmarks"
             elif role == "reasoner":
-                models["reasoner"] = "meta-llama/llama-3.3-70b-instruct:free"
+                models["reasoner"] = "moonshotai/kimi-k2.6:free"
             elif role == "critic":
                 models["critic"] = "openai/gpt-oss-120b:free"
             elif role == "synthesizer":

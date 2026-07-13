@@ -124,7 +124,7 @@ def _format_engine_data_for_llm(engine_results: Dict[str, Any]) -> str:
 async def llm_initial_analysis(query: str, context: Dict[str, Any], ncr_data: str = "", engine_results: Dict[str, Any] = None) -> str:
     """Get initial analysis from the best available model.
     
-    Model priority: Llama 3.3 70B (deep analysis) → GPT-OSS-120B → Qwen 3 4B → Gemini 3.1 Pro.
+    Model priority: Kimi k2.6 (deep analysis) → GPT-OSS-120B → Qwen 3 4B → Gemini 3.1 Pro.
     """
     try:
         cfg = load_llm_config()
@@ -201,7 +201,7 @@ Respond in clean markdown. No emojis in headers. Use bold for emphasis sparingly
             system=system,
             cfg=cfg,
             max_output_tokens=12000,
-            prefer="analysis",  # Routes to Llama 3.3 70B for deep analysis
+            prefer="analysis",  # Routes to Kimi k2.6 for deep analysis
         )
         return response
     except Exception as e:
@@ -320,12 +320,12 @@ async def ldrago_orchestrate(
             agent_results = {"agents": {}}
     
     # Step 2: LLM initial analysis (parallel with agents if possible)
-    logs.append("🔷 Getting multi-model analysis (Llama 3.3 70B + agents)...")
+    logs.append("🔷 Getting multi-model analysis (Kimi k2.6 + agents)...")
     llm_response = await llm_initial_analysis(query, context)
     if llm_response.startswith("[LLM"):
         logs.append("⚠ LLM analysis unavailable")
     else:
-        logs.append("✓ Llama 3.3 70B analysis complete")
+        logs.append("✓ Kimi k2.6 analysis complete")
     
     # Step 3: Gemini final synthesis
     logs.append("🧠 Gemini 3.1 Pro synthesizing final response...")
@@ -355,7 +355,7 @@ async def ldrago_orchestrate(
         "timestamp": end_time.isoformat(),
         "models_used": {
             "agents": GEMINI_MODEL,
-            "analysis": "meta-llama/llama-3.3-70b-instruct",
+            "analysis": "moonshotai/kimi-k2.6",
             "fast_llm": "qwen/qwen3-4b:free",
             "cross_validation": "openai/gpt-oss-120b",
             "orchestrator": ORCHESTRATOR_MODEL,
@@ -416,7 +416,7 @@ async def ldrago_fast(
     report_progress("🧠 Running LLM analysis (grounded in engine data)...", 50)
 
     async def _run_llm():
-        """Primary analysis via Llama 3.3 70B, grounded in engine results."""
+        """Primary analysis via Kimi k2.6, grounded in engine results."""
         try:
             return await llm_initial_analysis(query, context, ncr_data, engine_results=engine_result)
         except Exception as e:
@@ -446,7 +446,7 @@ async def ldrago_fast(
     if isinstance(llm_response, str) and llm_response.startswith("Analysis error"):
         report_progress(f"⚠ LLM: {llm_response[:60]}", 80)
     else:
-        report_progress("✓ Llama 3.3 70B analysis complete (grounded)", 70)
+        report_progress("✓ Kimi k2.6 analysis complete (grounded)", 70)
 
     if cross_val:
         report_progress("✓ GPT-OSS-120B cross-validation complete", 75)
@@ -466,7 +466,7 @@ async def ldrago_fast(
         "timestamp": end_time.isoformat(),
         "mode": "fast",
         "models_used": {
-            "primary": "meta-llama/llama-3.3-70b-instruct",
+            "primary": "moonshotai/kimi-k2.6",
             "cross_validation": "openai/gpt-oss-120b",
             "fallback": "qwen/qwen3-4b:free",
             "data_source": "Local CSV (NCR_AQI_2024_2025, delhi_ncr_traffic)",

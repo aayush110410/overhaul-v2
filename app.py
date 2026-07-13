@@ -2025,10 +2025,11 @@ async def fetch_tomtom_flow_for_geometry(geometry: Dict[str, Any]) -> Optional[D
 
 async def fetch_demo_route_geojson() -> Dict[str, Any]:
     """
-    Stub for a live route between Sector 78 and Vasundhara.
+    Labeled offline fallback for /live/route (Sector 78 → Vasundhara).
 
-    Replace this with a real routing call (e.g., OSRM, OpenRouteService, or
-    Overpass+custom routing) and return their geometry as GeoJSON.
+    Only served when the real OSRM call in live_route() fails; the feature
+    carries `"source": "demo_stub"` so clients can distinguish it from live
+    routing data.
     """
     # Approximate coordinates only (demo)
     coords = [
@@ -2895,8 +2896,9 @@ async def live_route():
     """
     Live route geometry for the corridor.
 
-    Currently returns a demo stub. Replace with a real routing API call
-    inside fetch_demo_route_geojson() when you are ready.
+    Tries the real OSRM corridor route first; when OSRM is unreachable it
+    degrades to the built-in demo geometry, which is explicitly labeled
+    `"source": "demo_stub"` in its feature properties so clients can tell.
     """
     try:
         live = await fetch_osrm_corridor_metrics()
@@ -3203,7 +3205,7 @@ async def ldrago_status():
             {"role": "location_resolver", "model": "nominatim/ncr_landmarks", "status": "active"},
             {"role": "planner", "model": "heuristic", "status": "active"},
             {"role": "researcher", "model": "data_apis", "status": "active"},
-            {"role": "reasoner", "model": "meta-llama/llama-3.3-70b-instruct:free", "status": "active" if qwen_enabled() else "unavailable"},
+            {"role": "reasoner", "model": "moonshotai/kimi-k2.6:free", "status": "active" if qwen_enabled() else "unavailable"},
             {"role": "critic", "model": "openai/gpt-oss-120b:free", "status": "active" if qwen_enabled() else "unavailable"},
             {"role": "synthesizer", "model": "gemini-3.1-pro-preview", "status": "active" if gemini_enabled() else "fallback"},
             {"role": "viz_output", "model": "geospatial-generator", "status": "active"},

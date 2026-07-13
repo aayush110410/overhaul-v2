@@ -1,6 +1,6 @@
 """Reasoner Agent — Deep analysis and causal inference.
 
-The heavyweight agent. Uses Llama 3.3 70B for deep analytical reasoning
+The heavyweight agent. Uses Kimi k2.6 for deep analytical reasoning
 over simulation engine results + research data.
 
 Produces:
@@ -53,7 +53,7 @@ Delhi NCR context: population ~20M commuters, 7M daily commuters, PM2.5 typicall
 
 
 async def deep_reasoning(ctx: AgentContext) -> AgentOutput:
-    """Run deep causal analysis using Llama 3.3 70B."""
+    """Run deep causal analysis using Kimi k2.6."""
     t0 = time.time()
 
     # Build the analysis prompt with all available context
@@ -88,14 +88,14 @@ async def deep_reasoning(ctx: AgentContext) -> AgentOutput:
         response = await llm_chat_text(
             prompt=prompt,
             system=_REASONER_SYSTEM,
-            prefer="analysis",  # Routes to Llama 3.3 70B
+            prefer="analysis",  # Routes to Kimi k2.6
             max_output_tokens=8000,
         )
-        result = {"analysis": response, "model": "llama-3.3-70b"}
+        result = {"analysis": response, "model": "kimi-k2.6"}
         ctx.reasoning_output = result
         dur = (time.time() - t0) * 1000
         ctx.log("reasoner", f"Deep analysis complete ({len(response)} chars)", dur)
-        return AgentOutput(role=AgentRole.REASONER, result=result, duration_ms=dur, model_used="llama")
+        return AgentOutput(role=AgentRole.REASONER, result=result, duration_ms=dur, model_used="kimi")
 
     except Exception as e:
         dur = (time.time() - t0) * 1000

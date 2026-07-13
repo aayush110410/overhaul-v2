@@ -4,7 +4,7 @@ Central config for all AI model providers used by OVERHAUL.
 
 Providers (via OpenRouter):
   1. Qwen 3 4B               – Fast reasoning (chat, JSON)
-  2. Llama 3.3 70B Instruct  – Heavy-duty analysis & predictions (free)
+  2. Kimi k2.6               – Heavy-duty analysis & predictions (free)
   3. GPT-OSS-120B            – Cross-validation & second opinion (free)
 
 Providers (via Google AI):

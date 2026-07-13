@@ -74,7 +74,7 @@ async def synthesize_response(ctx: AgentContext) -> AgentOutput:
         analysis = ctx.reasoning_output["analysis"]
         if len(analysis) > 5000:
             analysis = analysis[:5000] + "\n... (truncated)"
-        prompt_parts.append(f"# Deep Analysis (Llama 3.3 70B)\n{analysis}\n")
+        prompt_parts.append(f"# Deep Analysis (Kimi k2.6)\n{analysis}\n")
 
     # Engine results
     if ctx.engine_results:

@@ -10,6 +10,23 @@
 
 ---
 
+## 2026-07-13 — Session: continue from memory-transfer file → loose-end cleanup
+
+### User request
+Uploaded the OVERHAUL memory-transfer MD (a snapshot ~2 months stale, ends at "Stage F in progress") and asked to see what's built and **continue**, using parallel sub-agents for a token-efficient full-codebase read.
+
+### What was established
+- The repo is far past the MD: Stage F done, hive made real (2026-07-01), Living World Phases 0–6 ALL SHIPPED (2026-07-08, draft PR #1, `main` untouched, both claude/* branches at the same Phase-6 commit).
+- Two parallel Explore agents mapped backend + frontend; remaining gaps identified and fixed this session (see `history.md` 2026-07-13): `/world` engines panel unwired, FlyoverSim hardcoded `localhost:8001`, Llama→Kimi model-name drift, stale `/live/route` stub docstrings.
+
+### Still open (user decisions / user-machine work)
+1. **Merge PR #1** (draft, mergeable) — user's call.
+2. Visual tuning pass of 3D vehicles on the user's real Mapbox token (needs user machine).
+3. Optional glTF vehicle upgrade; OpenRouter credit (~$5–10) for 49-sentinel full-LLM runs.
+4. PATH.md targets not yet built: `graphiti_kuzu` memory backend (§6), local LLM pool (§5.2), MAANG restructure (§7).
+
+---
+
 ## 2026-07-06 — Living World: game-realistic 3D agent map + independent engines
 
 ### User request (summarized)

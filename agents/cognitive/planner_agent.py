@@ -94,7 +94,7 @@ def _heuristic_plan(intent: Dict[str, Any]) -> Dict[str, Any]:
         "parsing": {"model": "qwen", "reason": "Fast, sub-second intent extraction"},
         "planning": {"model": "heuristic", "reason": "Rule-based for simple queries"},
         "research": {"model": "gemini", "reason": "Google Search grounding for real-time data"},
-        "analysis": {"model": "llama", "reason": "Deep 70B parameter analysis"},
+        "analysis": {"model": "kimi", "reason": "Deep long-context analysis"},
         "validation": {"model": "gpt_oss", "reason": "Cross-validation with independent model"},
         "synthesis": {"model": "gemini", "reason": "Complex multi-source reasoning"},
     }

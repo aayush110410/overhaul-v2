@@ -29,6 +29,22 @@ const SPEEDS = [
   { label: '10×', value: 600 },
 ]
 
+const DOMAIN_ORDER = [
+  'transport', 'environment', 'infrastructure', 'energy',
+  'economic', 'population', 'logistics',
+]
+
+// First few scalar entries of an engine's metrics dict (skips nested objects).
+function scalarMetrics(metrics, n = 3) {
+  const out = []
+  for (const [k, v] of Object.entries(metrics || {})) {
+    if (typeof v === 'number' && Number.isFinite(v)) out.push([k, Math.round(v * 100) / 100])
+    else if (typeof v === 'string' && v.length <= 28) out.push([k, v])
+    if (out.length >= n) break
+  }
+  return out
+}
+
 function lightPresetFor(clockS) {
   const h = ((clockS % 86400) + 86400) % 86400 / 3600
   if (h < 5) return 'night'
@@ -48,6 +64,7 @@ export default function WorldCommand() {
   const [prompt, setPrompt] = useState('')
   const [sentinelIdx, setSentinelIdx] = useState(null)
   const [showReport, setShowReport] = useState(false)
+  const [showEngines, setShowEngines] = useState(false)
   const [speedSel, setSpeedSel] = useState(60)
 
   const containerRef = useRef(null)
@@ -302,7 +319,36 @@ export default function WorldCommand() {
           {world.report && (
             <button className="wc-report-tab" onClick={() => setShowReport(true)}>⬒ BRIEF</button>
           )}
+
+          {world.engines && (
+            <button className="wc-engines-tab" onClick={() => setShowEngines(true)}>⬡ ENGINES</button>
+          )}
         </>
+      )}
+
+      {/* ── impact engines panel (7-domain refresh, hourly sim-time) ── */}
+      {showEngines && world.engines && (
+        <div className="wc-panel wc-engines" data-testid="engines-panel">
+          <button className="wc-close" onClick={() => setShowEngines(false)}>✕</button>
+          <h3>IMPACT ENGINES</h3>
+          {DOMAIN_ORDER.filter((d) => world.engines[d]).map((d) => {
+            const e = world.engines[d]
+            return (
+              <div key={d} className="wc-engine">
+                <div className="wc-engine-head">
+                  <span>{d}</span>
+                  <em>{Math.round((e.confidence || 0) * 100)}%</em>
+                </div>
+                {scalarMetrics(e.metrics).map(([k, v]) => (
+                  <div key={k} className="wc-engine-metric">
+                    <span>{k.replace(/_/g, ' ')}</span><b>{String(v)}</b>
+                  </div>
+                ))}
+                {e.recommendations?.[0] && <p className="wc-engine-rec">{e.recommendations[0]}</p>}
+              </div>
+            )
+          })}
+        </div>
       )}
 
       {/* ── sentinel panel ── */}

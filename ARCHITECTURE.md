@@ -27,7 +27,7 @@
 │                                                                     │
 │  ┌──────────┐   ┌──────────────┐   ┌──────────────────────────┐   │
 │  │ Frontend │   │   FastAPI     │   │   LLM Multi-Model Stack  │   │
-│  │ React +  │──▶│   Gateway     │──▶│   Qwen / Llama / GPT-OSS│   │
+│  │ React +  │──▶│   Gateway     │──▶│   Qwen / Kimi / GPT-OSS│   │
 │  │ Three.js │   │   (app.py)    │   │   / Gemini               │   │
 │  └──────────┘   └──────┬───────┘   └──────────────────────────┘   │
 │                         │                                           │
@@ -79,7 +79,7 @@ USER QUERY
                                    │        PARALLEL PHASE         │
                                    │  ┌──────────┐ ┌───────────┐  │
                                    │  │ REASONER │ │  CRITIC   │  │
-                                   │  │ Llama 70B│ │ GPT-OSS   │  │
+                                   │  │ Kimi k2.6│ │ GPT-OSS   │  │
                                    │  │  ~5s     │ │ 120B ~5s  │  │
                                    │  └──────────┘ └───────────┘  │
                                    └───────────────┬──────────────┘
@@ -101,9 +101,9 @@ USER QUERY
 | **Parser** | Qwen 3 4B | <1s | Extract intent, interventions, entities, complexity | Keyword heuristic (25+ domain terms) |
 | **Planner** | Heuristic + LLM | <0.5s | Generate execution plan, select engines/models | Rule-based plan from complexity score |
 | **Researcher** | Data APIs | ~1s | Parallel fetch: NCR CSV data, live AQI, traffic | Cached defaults with city calibration |
-| **Reasoner** | Llama 3.3 70B | ~5s | Causal chains, cross-domain impact matrix, second-order effects | Qwen fallback |
+| **Reasoner** | Kimi k2.6 | ~5s | Causal chains, cross-domain impact matrix, second-order effects | Qwen fallback |
 | **Critic** | GPT-OSS 120B | ~5s | Physics validation, consistency scoring, bound checking | Heuristic physics checks |
-| **Synthesizer** | Gemini 3.1 Pro | ~5s | Executive summary, recommendations, risk assessment | Llama fallback |
+| **Synthesizer** | Gemini 3.1 Pro | ~5s | Executive summary, recommendations, risk assessment | Kimi fallback |
 
 ### Execution Modes
 
@@ -141,7 +141,7 @@ class AgentContext:
 | Model | Provider | Parameters | Context | Cost | Latency | Strengths |
 |-------|----------|-----------|---------|------|---------|-----------|
 | Qwen 3 4B | OpenRouter | 4B | 32K | Free | <1s | Fast JSON, parsing |
-| Llama 3.3 70B | OpenRouter | 70B | 128K | Free | ~3s | Deep analysis, reasoning |
+| Kimi k2.6 | OpenRouter | 32B (MoE) | 128K | Free | ~3s | Deep analysis, reasoning |
 | GPT-OSS 120B | OpenRouter | 120B | 128K | Free | ~5s | Cross-validation, fact-checking |
 | Gemini 3.1 Pro | Google AI | ~200B* | 1M | $0.00125/1K | ~3s | Synthesis, grounding, long context |
 
@@ -150,20 +150,20 @@ class AgentContext:
 | Task | Speed Priority | Quality Priority | Cost Priority | Balanced |
 |------|---------------|-----------------|--------------|----------|
 | Parse | Qwen (fast) | Qwen (fast) | Qwen (fast) | Qwen (fast) |
-| Plan | Qwen (fast) | Llama (analysis) | Qwen (fast) | Qwen (fast) |
-| Analyze | Llama (analysis) | Llama (analysis) | Llama (analysis) | Llama (analysis) |
+| Plan | Qwen (fast) | Kimi (analysis) | Qwen (fast) | Qwen (fast) |
+| Analyze | Kimi (analysis) | Kimi (analysis) | Kimi (analysis) | Kimi (analysis) |
 | Validate | Qwen (fast) | GPT-OSS (validate) | Qwen (fast) | GPT-OSS (validate) |
-| Synthesize | Llama (analysis) | Gemini (reason) | Llama (analysis) | Gemini (reason) |
-| Chat | Qwen (fast) | Llama (analysis) | Qwen (fast) | Qwen (fast) |
-| Forecast | Llama (analysis) | Gemini (reason) | Llama (analysis) | Gemini (reason) |
+| Synthesize | Kimi (analysis) | Gemini (reason) | Kimi (analysis) | Gemini (reason) |
+| Chat | Qwen (fast) | Kimi (analysis) | Qwen (fast) | Qwen (fast) |
+| Forecast | Kimi (analysis) | Gemini (reason) | Kimi (analysis) | Gemini (reason) |
 
 ### Fallback Chains
 
 ```
-Qwen → Llama → GPT-OSS → Gemini (fast tasks)
-Llama → GPT-OSS → Gemini → Qwen (analysis tasks)
-GPT-OSS → Llama → Gemini (validation tasks)
-Gemini → Llama → GPT-OSS (synthesis tasks)
+Qwen → Kimi → GPT-OSS → Gemini (fast tasks)
+Kimi → GPT-OSS → Gemini → Qwen (analysis tasks)
+GPT-OSS → Kimi → Gemini (validation tasks)
+Gemini → Kimi → GPT-OSS (synthesis tasks)
 ```
 
 Every LLM call attempts the primary model, then falls through the chain. The system never fails silently — it degrades gracefully.
@@ -363,7 +363,7 @@ Raw Data (CSV, API, JSON)
     "critique": { "validation_pass": true, "consistency_score": 0.87 },
     "brainInsights": {
       "orchestrator": "LDRAGo v2 (full)",
-      "models_used": { "parser": "qwen", "reasoner": "llama", ... },
+      "models_used": { "parser": "qwen", "reasoner": "kimi", ... },
       "agent_trace": [...],
       "duration_seconds": 9.4
     }
@@ -388,7 +388,7 @@ OVERHAUL-main/
 │   │   ├── parser_agent.py         # Intent extraction (Qwen)
 │   │   ├── planner_agent.py        # Execution planning
 │   │   ├── researcher_agent.py     # Parallel data gathering
-│   │   ├── reasoner_agent.py       # Deep analysis (Llama 70B)
+│   │   ├── reasoner_agent.py       # Deep analysis (Kimi k2.6)
 │   │   ├── critic_agent.py         # Physics validation (GPT-OSS)
 │   │   ├── synthesizer_agent.py    # Final synthesis (Gemini)
 │   │   └── roles.py                # AgentRole, AgentContext, AgentOutput

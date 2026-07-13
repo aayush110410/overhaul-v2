@@ -193,6 +193,30 @@
   letter-spacing: 0.06em;
 }
 
+.wc-engines-tab {
+  position: absolute; right: 14px; bottom: 62px; z-index: 15;
+  padding: 0.55rem 1.1rem; border-radius: 10px; cursor: pointer; font-weight: 800;
+  background: rgba(10, 14, 20, 0.88); color: #9fb3c8;
+  border: 1px solid rgba(255, 255, 255, 0.18); letter-spacing: 0.06em;
+  backdrop-filter: blur(10px);
+}
+.wc-engines-tab:hover { color: #e5edf5; border-color: rgba(255, 255, 255, 0.34); }
+
+.wc-engine { padding: 0.55rem 0; border-top: 1px solid rgba(255, 255, 255, 0.08); }
+.wc-engine:first-of-type { border-top: 0; }
+.wc-engine-head {
+  display: flex; justify-content: space-between; align-items: baseline;
+  font-size: 0.78rem; letter-spacing: 0.1em; text-transform: uppercase; color: #e5edf5;
+}
+.wc-engine-head em { font-style: normal; color: #8b98a5; font-size: 0.72rem; }
+.wc-engine-metric {
+  display: flex; justify-content: space-between; gap: 0.6rem;
+  font-size: 0.74rem; color: #8b98a5; padding: 0.12rem 0;
+}
+.wc-engine-metric span { text-transform: capitalize; }
+.wc-engine-metric b { color: #cfe3f5; font-variant-numeric: tabular-nums; font-weight: 600; }
+.wc-engine-rec { margin: 0.3rem 0 0; font-size: 0.72rem; color: #9fb3c8; line-height: 1.35; }
+
 /* ── panels ── */
 .wc-panel {
   position: absolute; right: 14px; top: 70px; z-index: 25; width: 320px;

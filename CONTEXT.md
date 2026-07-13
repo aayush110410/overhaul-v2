@@ -9,7 +9,15 @@
 
 ---
 
-## ⭐ CURRENT STATE — 2026-07-01 (newest; supersedes older sections)
+## ⭐ CURRENT STATE — 2026-07-13 (newest; supersedes older sections)
+
+**Living World (Phases 0–6) is SHIPPED** (2026-07-08, draft PR #1; see `cloud-context/` for the full ledger): `/world` renders any-city, game-realistic 3D agent simulation — real OSM roads, live weather, seasonal AQI (Diwali table), income-strata personas, policy packs, binary WS streaming, tokenless basemap fallback. Suite ~254 tests.
+
+**2026-07-13 loose-end cleanup** (branch `claude/codebase-review-agents-nts5xt`): `/world` now renders the streamed 7-domain engine results (IMPACT ENGINES panel); FlyoverSim honors `VITE_API_BASE`; all stale "Llama 3.3 70B" references corrected to the real analysis model Kimi k2.6 (code + `/ldrago/status` + docs); `/live/route` docstrings now describe the real OSRM-first behavior. Open: merge PR #1, Mapbox-token visual pass, optional glTF vehicles, `graphiti_kuzu` backend.
+
+---
+
+## CURRENT STATE — 2026-07-01 (superseded by above)
 
 **The Sentinel-Swarm-Hive loop is REAL** (the 2026-06-03 audit theater is resolved):
 - Sentinels reason via real LLM, Segment Brains LLM-distill `CollectiveTruth` with **real edge IDs**, the swarm **inherits** it (proven `swarm_inherited_routes > 0`), the hive loop is **parallel** (`asyncio.gather`), and the old `suggested_route` crash is fixed.

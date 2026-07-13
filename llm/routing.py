@@ -2,14 +2,14 @@
 
 This module defines the intelligent routing logic that assigns the
 optimal model to each cognitive task based on:
-  - Task complexity (simple→Qwen, complex→Llama, synthesis→Gemini)
-  - Latency budget (streaming chat→Qwen, deep analysis→Llama)
+  - Task complexity (simple→Qwen, complex→Kimi, synthesis→Gemini)
+  - Latency budget (streaming chat→Qwen, deep analysis→Kimi)
   - Cost optimization (free models preferred, Gemini for high-value)
   - Reliability (fallback chains for rate-limited free models)
 
 Model Capabilities Matrix:
 ┌──────────────────────┬──────────┬───────────┬───────────┬──────────────┐
-│ Capability           │ Qwen 4B  │ Llama 70B │ GPT-OSS   │ Gemini 3.1   │
+│ Capability           │ Qwen 4B  │ Kimi k2.6 │ GPT-OSS   │ Gemini 3.1   │
 ├──────────────────────┼──────────┼───────────┼───────────┼──────────────┤
 │ JSON parsing         │ ★★★★☆   │ ★★★☆☆    │ ★★☆☆☆    │ ★★★★★       │
 │ Fast chat            │ ★★★★★   │ ★★★☆☆    │ ★★☆☆☆    │ ★★★★☆       │
@@ -27,7 +27,7 @@ LDRAGO v2 Pipeline Assignment:
   Parser      → Qwen 3 4B        (needs speed + JSON output)
   Planner     → Heuristic rules   (no LLM needed for most queries)
   Researcher  → Data APIs         (no LLM needed)
-  Reasoner    → Llama 3.3 70B    (needs deep analysis capability)
+  Reasoner    → Kimi k2.6        (needs deep analysis capability)
   Critic      → GPT-OSS-120B     (independent model for cross-validation)
   Synthesizer → Gemini 3.1 Pro   (needs multi-source synthesis + search)
 """
@@ -82,9 +82,9 @@ QWEN = ModelProfile(
     weaknesses=["shallow_reasoning", "limited_context"],
 )
 
-LLAMA = ModelProfile(
-    name="meta-llama/llama-3.3-70b-instruct:free", provider="openrouter",
-    prefer_key="analysis", params_b=70, context_window=128_000,
+KIMI = ModelProfile(
+    name="moonshotai/kimi-k2.6:free", provider="openrouter",
+    prefer_key="analysis", params_b=32, context_window=128_000,
     cost_per_1k_tokens=0.0, median_latency_ms=3000,
     strengths=["deep_reasoning", "data_analysis", "long_context"],
     weaknesses=["slower", "rate_limited"],
@@ -106,7 +106,7 @@ GEMINI = ModelProfile(
     weaknesses=["costs_money", "quota_limited"],
 )
 
-ALL_MODELS = [QWEN, LLAMA, GPT_OSS, GEMINI]
+ALL_MODELS = [QWEN, KIMI, GPT_OSS, GEMINI]
 
 
 # ── Task → Model Routing Table ──

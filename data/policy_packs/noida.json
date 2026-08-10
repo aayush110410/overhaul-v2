@@ -1,0 +1,29 @@
+{
+  "region": "noida",
+  "as_of": "2026-01",
+  "facts": [
+    {"claim": "Noida land is authority-owned leasehold; plots are allotted on lease by NOIDA, not sold freehold", "value": "leasehold", "unit": "tenure", "source": "UP Industrial Area Development Act 1976", "as_of": "2025", "confidence": 0.95},
+    {"claim": "GRAP (Graded Response Action Plan) stages restrict construction and vehicle categories in NCR when AQI crosses thresholds", "value": "stages I-IV at AQI 201/301/401/450", "unit": "policy", "source": "CAQM GRAP schedule", "as_of": "2024-10 revision", "confidence": 0.9},
+    {"claim": "10-year diesel / 15-year petrol vehicles are banned from NCR roads", "value": "10/15", "unit": "years", "source": "NGT order (2015), upheld by Supreme Court 2018", "as_of": "2025", "confidence": 0.95},
+    {"claim": "Uttar Pradesh state budget FY2025-26 headline size", "value": 808736, "unit": "INR crore", "source": "UP Budget 2025-26 (Feb 2025)", "as_of": "2025-02", "confidence": 0.8},
+    {"claim": "Noida Authority annual budget is of the order of INR 10-13k crore, with capex weighted to roads, metro extensions and land acquisition", "value": 11000, "unit": "INR crore (approx.)", "source": "Noida Authority board budget (recent years, order-of-magnitude)", "as_of": "2025", "confidence": 0.6},
+    {"claim": "Motor Vehicles (Amendment) Act 2019 penalty schedule applies (UP-notified rates)", "value": "MV Act 2019", "unit": "law", "source": "MoRTH / UP notification", "as_of": "2025", "confidence": 0.9}
+  ],
+  "budget": {
+    "fiscal_year": "2025-26 (latest enacted known to pack; 2026-27 to be refreshed by PolicyAgent)",
+    "state_headline_cr": 808736,
+    "authority_capex_cr_approx": 11000,
+    "note": "Values are pack-dated; the PolicyAgent's search grounding refreshes at runtime."
+  },
+  "land": {
+    "authority": "New Okhla Industrial Development Authority (NOIDA)",
+    "ownership_model": "authority-owned leasehold plots (residential/industrial/institutional allotments)",
+    "master_plan": "Noida Master Plan 2031"
+  },
+  "acts": [
+    "UP Industrial Area Development Act 1976",
+    "Motor Vehicles (Amendment) Act 2019",
+    "Commission for Air Quality Management in NCR Act 2021",
+    "UP Apartment Act 2010"
+  ]
+}

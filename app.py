@@ -2139,6 +2139,11 @@ async def body_size_middleware(request: Request, call_next):
 if IMAGEN_OVERLAY_AVAILABLE:
     app.include_router(imagen_router)
 
+# Living World streaming (WS binary frames + SSE fallback)
+from world.stream import router as world_stream_router  # noqa: E402
+
+app.include_router(world_stream_router)
+
 from fastapi import Query
 from fastapi import Header
 
@@ -2691,6 +2696,88 @@ async def simulate_hive_stream(
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
     )
+
+
+# ── Living World: persistent per-agent sessions (see shared/contracts/world_frame.md) ──
+
+
+class WorldStartRequest(BaseModel):
+    prompt: str = Field(..., min_length=1, max_length=5000)
+    agent_count: int = Field(1500, ge=50, le=2500)
+    sentinels: int = Field(14, ge=1, le=70)
+    speed: int = Field(60, ge=1, le=600)  # sim-seconds per real second
+    enable_llm: bool = True
+
+
+@app.post("/world/start")
+async def world_start(req: WorldStartRequest):
+    """Start a live world: prompt → region (ANY city, geocoded) → real road
+    network → weather → individually-moving agents. Positions stream over
+    `WS /ws/world/{session_id}` (binary frames) with an SSE fallback at
+    `GET /world/{session_id}/stream`. No `_VALID_CITIES` gate here."""
+    from world.roadnet import RoadNetworkUnavailable
+    from world.session import create_session
+
+    try:
+        session = await create_session(
+            prompt=req.prompt,
+            agent_count=req.agent_count,
+            sentinels=req.sentinels,
+            speed=req.speed,
+            enable_llm=req.enable_llm,
+        )
+    except RoadNetworkUnavailable as exc:
+        raise HTTPException(status_code=503, detail=str(exc))
+    return {
+        "session_id": session.session_id,
+        "region": session.hello_message()["region"],
+        "conditions": session.conditions.to_dict(),
+        "weather": session.weather.to_dict(),
+        "agents": {
+            "total": len(session.movement.agents),
+            "sentinels": len(session._sentinel_indices),
+        },
+        "speed": session.speed,
+        "ws_url": f"/ws/world/{session.session_id}",
+        "sse_url": f"/world/{session.session_id}/stream",
+    }
+
+
+@app.get("/world/{session_id}/state")
+async def world_state(session_id: str):
+    """Snapshot of a live session (client refresh recovery)."""
+    from world.session import SESSIONS
+
+    session = SESSIONS.get(session_id)
+    if session is None:
+        raise HTTPException(status_code=404, detail="unknown session")
+    return session.state_json()
+
+
+class WorldSpeedRequest(BaseModel):
+    speed: int = Field(..., ge=0, le=600)  # 0 pauses
+
+
+@app.post("/world/{session_id}/speed")
+async def world_speed(session_id: str, req: WorldSpeedRequest):
+    """Runtime time-dilation: 0 = pause, 60 = default, up to 600×."""
+    from world.session import SESSIONS
+
+    session = SESSIONS.get(session_id)
+    if session is None:
+        raise HTTPException(status_code=404, detail="unknown session")
+    return {"session_id": session_id, "speed": session.set_speed(req.speed)}
+
+
+@app.post("/world/{session_id}/stop")
+async def world_stop(session_id: str):
+    from world.session import SESSIONS
+
+    session = SESSIONS.get(session_id)
+    if session is None:
+        raise HTTPException(status_code=404, detail="unknown session")
+    await session.stop()
+    return {"stopped": session_id}
 
 
 class CompareRequest(BaseModel):

@@ -1,0 +1,19 @@
+{
+  "key": "_generic",
+  "display_name": "Generic Region",
+  "country": "UN",
+  "center": [0.0, 0.0],
+  "bbox": [0.0, 0.0, 0.0, 0.0],
+  "timezone": "UTC",
+  "rush_hours": [[8, 10], [17, 19]],
+  "driving_style": {"speed_factor": 0.90, "lane_discipline": 0.70, "two_wheeler_share": 0.10},
+  "signals": {"avg_cycle_s": 100, "green_split": 0.50},
+  "income_distribution": {"lt_3L": 0.18, "3_5L": 0.18, "5_10L": 0.22, "10_20L": 0.20, "20L_1Cr": 0.16, "gt_1Cr": 0.06},
+  "mode_split": {"car": 0.35, "two_wheeler": 0.10, "auto": 0.08, "bus": 0.27, "walk": 0.20},
+  "aqi_baseline": {"annual_mean_pm25": 25, "winter_multiplier": 1.2, "monsoon_multiplier": 0.90},
+  "cultural_calendar": [],
+  "policy_pack": null,
+  "gazetteer": [],
+  "sources": ["generic template; strata keys are relative local income tiers outside India"],
+  "generated": true
+}

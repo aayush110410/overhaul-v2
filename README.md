@@ -170,6 +170,20 @@ Try it: `POST /simulate/hive  {"prompt": "congestion pricing in central Delhi"}`
 → a schema-valid `SimulationState` (brains, sentinels, geojson, timesteps, engine
 results, policy brief, gateway stats).
 
+### The Living World (`/world`)
+
+Open `http://localhost:5173/world` and type a place in plain English —
+*"what if it rains during rush hour in New York?"* The camera flies to the
+region, its real OSM street network loads (cached once, forever), and every
+agent — sentinels **and** the whole swarm — drives it individually in real
+time: income-strata personas pick modes, signals cycle, weather slows traffic
+(and renders: GPU rain/snow, smog haze, day/night), the hive's LLM decisions
+visibly re-route vehicles, and the 7 engines + a seasonal AQI model (winter
+smog, Diwali fireworks) refresh live. Streaming protocol:
+[`shared/contracts/world_frame.md`](shared/contracts/world_frame.md).
+Works without a Mapbox token (community CARTO basemap) and fully offline
+(NCR fallback graph + seasonal weather/AQI models).
+
 ### Key environment variables
 
 | Variable | Required | Purpose |
@@ -195,6 +209,10 @@ python3 -m pytest tests/test_hive_e2e.py -q            # live e2e (needs keys)
 
 | Method | Path | Purpose |
 |--------|------|---------|
+| POST | `/world/start` | **start a Living World session** (any city, plain English) |
+| WS | `/ws/world/{id}` | binary agent frames @5 Hz + JSON events |
+| GET | `/world/{id}/stream` | SSE fallback (≤2 Hz decoded frames) |
+| GET/POST | `/world/{id}/state` · `/speed` · `/stop` | session control: snapshot / pause–600× / end |
 | POST | `/simulate/hive` | **the Sentinel-Swarm-Hive run** → `SimulationState` |
 | GET | `/simulate/hive/stream` | same run as **SSE** — live per-phase progress, then `done` |
 | POST | `/simulate/agent-based` | swarm sim, pure physics (no LLM) |

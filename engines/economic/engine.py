@@ -233,6 +233,29 @@ class EconomicEngine(SimulationEngine):
         if property_premium_pct > 1:
             recommendations.append(f"Property values projected to rise {property_premium_pct:.1f}% — land value capture can fund infrastructure")
 
+        # Regional policy grounding (honest limits): a curated pack raises
+        # confidence and pins land/budget context into the result; its absence
+        # is flagged loudly instead of silently pretending regional knowledge.
+        confidence = 0.55
+        warnings = ["Economic projections use simplified models — actual ROI depends on implementation quality and policy stability"]
+        metadata: Dict[str, Any] = {"agent_sim_used": agent_sim_used}
+        pack = data.get("policy_pack")
+        if pack:
+            confidence = 0.62
+            metadata["policy_pack"] = {
+                "region": pack.get("region"),
+                "as_of": pack.get("as_of"),
+                "facts": len(pack.get("facts", [])),
+                "land_authority": (pack.get("land") or {}).get("authority"),
+                "budget": pack.get("budget"),
+                "acts": pack.get("acts", []),
+            }
+        elif data.get("policy_pack_missing"):
+            confidence = 0.45
+            warnings.append(
+                "No policy pack for this region — budget/land/law grounding unavailable; treat fiscal outputs as generic estimates"
+            )
+
         return SimulationResult(
             engine=self.name,
             domain=EngineCapability.ECONOMIC,
@@ -240,7 +263,7 @@ class EconomicEngine(SimulationEngine):
             metrics=metrics,
             impacts=impacts,
             recommendations=recommendations,
-            confidence=0.55,
-            warnings=["Economic projections use simplified models — actual ROI depends on implementation quality and policy stability"],
-            metadata={"agent_sim_used": agent_sim_used},
+            confidence=confidence,
+            warnings=warnings,
+            metadata=metadata,
         )

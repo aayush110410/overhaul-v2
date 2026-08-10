@@ -34,6 +34,8 @@ def _dijkstra_physics_fallback(
     flow_map: Dict[str, float],
     avoid_zones: Optional[List[str]] = None,
     preferred_zones: Optional[List[str]] = None,
+    nodes: Optional[List[str]] = None,
+    edges: Optional[List[Dict[str, Any]]] = None,
 ) -> Dict[str, Any]:
     """Physics-only Dijkstra shortest path.
 
@@ -45,12 +47,16 @@ def _dijkstra_physics_fallback(
         flow_map: Current edge flow map (edge_id -> flow).
         avoid_zones: Edge IDs to penalize with 10x cost multiplier.
         preferred_zones: Edge IDs to bonus with 0.5x cost multiplier.
+        nodes/edges: The graph to route on (defaults to the NCR corridor set,
+            preserving legacy behavior; injected graphs MUST pass their own).
 
     Returns:
         Dict with path (list of edges), travel_time_min, total_dist_km.
     """
-    nodes = list(_DEFAULT_NODES.keys())
-    edges = list(_DEFAULT_EDGES)
+    nodes = list(nodes) if nodes is not None else list(_DEFAULT_NODES.keys())
+    edges = list(edges) if edges is not None else list(_DEFAULT_EDGES)
+    if origin not in nodes or destination not in nodes:
+        return {"travel_time_min": float("inf"), "path": [], "total_dist_km": 0.0}
 
     AVOID_PENALTY = 10.0
     PREFERRED_BONUS = 0.5
@@ -91,7 +97,8 @@ def _dijkstra_physics_fallback(
                 prev[v] = (u, edge)
                 heapq.heappush(pq, (nd, v))
 
-    if dist[destination] == float("inf"):
+    if dist.get(destination, float("inf")) == float("inf"):
+        # Unreachable (e.g. one-way dead ends on real road graphs) — degrade.
         return {"travel_time_min": float("inf"), "path": [], "total_dist_km": 0.0}
 
     # Reconstruct path
@@ -260,6 +267,8 @@ class SurgicalAgent:
             flow_map=flow_map,
             avoid_zones=avoid_zones,
             preferred_zones=preferred_zones,
+            nodes=state.get("nodes"),
+            edges=state.get("edges"),
         )
 
         route_edges = [f"{e['u']}->{e['v']}" for e in result["path"]]

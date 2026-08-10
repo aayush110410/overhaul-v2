@@ -1,0 +1,46 @@
+{
+  "version": 0.6,
+  "generator": "test-fixture",
+  "elements": [
+    {
+      "type": "way",
+      "id": 100,
+      "nodes": [1, 2, 7, 3],
+      "tags": {"highway": "primary", "name": "MG Road", "lanes": "3", "maxspeed": "60"},
+      "geometry": [
+        {"lat": 28.5000, "lon": 77.3000},
+        {"lat": 28.5000, "lon": 77.3100},
+        {"lat": 28.5000, "lon": 77.3150},
+        {"lat": 28.5000, "lon": 77.3200}
+      ]
+    },
+    {
+      "type": "way",
+      "id": 200,
+      "nodes": [4, 2, 5],
+      "tags": {"highway": "secondary", "name": "Ring Road"},
+      "geometry": [
+        {"lat": 28.5100, "lon": 77.3100},
+        {"lat": 28.5000, "lon": 77.3100},
+        {"lat": 28.4900, "lon": 77.3100}
+      ]
+    },
+    {
+      "type": "way",
+      "id": 300,
+      "nodes": [3, 6],
+      "tags": {"highway": "trunk", "name": "Expressway", "oneway": "yes"},
+      "geometry": [
+        {"lat": 28.5000, "lon": 77.3200},
+        {"lat": 28.5100, "lon": 77.3300}
+      ]
+    },
+    {
+      "type": "node",
+      "id": 2,
+      "lat": 28.5000,
+      "lon": 77.3100,
+      "tags": {"highway": "traffic_signals"}
+    }
+  ]
+}

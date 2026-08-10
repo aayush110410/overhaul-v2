@@ -1,0 +1,27 @@
+{
+  "region": "delhi",
+  "as_of": "2026-01",
+  "facts": [
+    {"claim": "GRAP stages restrict construction, trucks and BS-III/IV private vehicles as AQI crosses 201/301/401/450", "value": "GRAP I-IV", "unit": "policy", "source": "CAQM GRAP schedule", "as_of": "2024-10 revision", "confidence": 0.9},
+    {"claim": "10-year diesel / 15-year petrol vehicles are deregistered and banned in Delhi", "value": "10/15", "unit": "years", "source": "NGT 2015 + Supreme Court 2018", "as_of": "2025", "confidence": 0.95},
+    {"claim": "Delhi land use is governed by the DDA Master Plan; MPD-2041 was notified as the operative plan framework", "value": "MPD-2041", "unit": "master plan", "source": "Delhi Development Authority", "as_of": "2025", "confidence": 0.75},
+    {"claim": "Delhi EV Policy incentivizes electric two-wheelers and fleet electrification", "value": "EV Policy (2020, extended)", "unit": "policy", "source": "GNCTD Transport Dept", "as_of": "2025", "confidence": 0.8},
+    {"claim": "Delhi state budget headline is of the order of INR 75-80k crore", "value": 78000, "unit": "INR crore (approx.)", "source": "GNCTD budget (recent years, order-of-magnitude)", "as_of": "2025", "confidence": 0.6}
+  ],
+  "budget": {
+    "fiscal_year": "2025-26 (latest known to pack)",
+    "state_headline_cr": 78000,
+    "note": "Order-of-magnitude; PolicyAgent grounding refreshes at runtime."
+  },
+  "land": {
+    "authority": "Delhi Development Authority (DDA)",
+    "ownership_model": "mixed: DDA leasehold/freehold conversions, private freehold colonies, government land",
+    "master_plan": "Master Plan for Delhi 2041"
+  },
+  "acts": [
+    "Delhi Development Act 1957",
+    "Motor Vehicles (Amendment) Act 2019",
+    "Commission for Air Quality Management in NCR Act 2021",
+    "Delhi Motor Vehicles Aggregator and Delivery Service Provider Scheme 2023"
+  ]
+}

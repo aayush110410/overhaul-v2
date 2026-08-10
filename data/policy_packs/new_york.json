@@ -1,0 +1,27 @@
+{
+  "region": "new_york",
+  "as_of": "2026-01",
+  "facts": [
+    {"claim": "Congestion pricing (Central Business District Tolling) charges passenger vehicles entering Manhattan below 60th St", "value": 9, "unit": "USD peak toll (2025 restart rate)", "source": "MTA CBDTP", "as_of": "2025-01", "confidence": 0.85},
+    {"claim": "NYC speed limit defaults to 25 mph citywide (Vision Zero); Sammy's Law allows 20 mph zones", "value": 25, "unit": "mph", "source": "NYC DOT / Vision Zero", "as_of": "2025", "confidence": 0.9},
+    {"claim": "Local Law 97 caps building carbon emissions with fines from 2024 compliance periods", "value": "LL97", "unit": "law", "source": "NYC Climate Mobilization Act 2019", "as_of": "2025", "confidence": 0.85},
+    {"claim": "NYC land is predominantly private freehold under city zoning (NYC Zoning Resolution); streets/parks are city-owned", "value": "private freehold + city right-of-way", "unit": "tenure", "source": "NYC Zoning Resolution", "as_of": "2025", "confidence": 0.9},
+    {"claim": "NYC city budget headline is of the order of USD 110-115 billion", "value": 112, "unit": "USD billion (approx.)", "source": "NYC adopted budget (recent years, order-of-magnitude)", "as_of": "2025", "confidence": 0.6}
+  ],
+  "budget": {
+    "fiscal_year": "FY2026 (latest known to pack)",
+    "city_headline_usd_b": 112,
+    "note": "Order-of-magnitude; PolicyAgent grounding refreshes at runtime."
+  },
+  "land": {
+    "authority": "NYC Department of City Planning (zoning); NYC DOT (streets)",
+    "ownership_model": "private freehold under zoning; city-owned right-of-way and parks",
+    "master_plan": "NYC Zoning Resolution + OneNYC strategic plan"
+  },
+  "acts": [
+    "NYC Zoning Resolution",
+    "Climate Mobilization Act 2019 (Local Law 97)",
+    "MTA Central Business District Tolling Program (congestion pricing)",
+    "Sammy's Law (2024, 20 mph authority)"
+  ]
+}

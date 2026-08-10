@@ -388,6 +388,23 @@ Confirm each still exists before deleting; the tree may have changed.
 - Error states (provider down, quota hit) degrade gracefully and visibly — never silent-fake.
 - **DoD:** the investor demo path runs end-to-end on free tiers, repeatably.
 
+### 2026-07 addendum — THE LIVING WORLD (shipped on `claude/ultraplan-agent-map-ui-md9ucq`, PR #1)
+A superset of Phase 5/6 goals, built as its own six-phase track (see
+`cloud-context/history.md` for the ledger):
+- **`world/` package**: RegionResolver (any city, plain English, gazetteer→Nominatim→LLM-last-resort),
+  RoadNetwork (real OSM via Overpass, cached; ≤30-node corridor graph as the LLM vocabulary),
+  WeatherProvider (open-meteo live/archive), MovementSim (per-agent kinematics: BPR occupancy,
+  signal cycles, mode behavior, weather factor), WorldSession (10 Hz tick loop, event-gated hive
+  cognition, hourly engine refresh), binary WS streaming (`shared/contracts/world_frame.md`).
+- **`/world` UI**: photoreal Mapbox Standard (or tokenless CARTO/MapLibre fallback), procedural
+  3D vehicles dead-reckoned to 60 fps, day/night, GPU rain/snow + smog haze, glass game-HUD.
+- **Engine depth**: seasonal AQI model (`engines/environment/aqi_model.py` — CPCB index, winter
+  inversion, stubble window, Diwali table 2024–2030), income-strata personas (`world/personas.py`)
+  feeding movement AND sentinel LLM context, policy packs (`data/policy_packs/`) grounding the
+  EconomicEngine with honest-limit warnings, CollectiveTruth→movement re-routing.
+- **Invariants upheld**: zero LLM in tick loops (gateway-only, event-gated), no mocks in shipped
+  paths (live-first, model fallback, sources labeled), contract-first (frame spec + SimulationState).
+
 ---
 
 ## 10. DEFINITION OF DONE (the bar for "real" + "demo-ready")

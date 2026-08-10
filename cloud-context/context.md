@@ -10,6 +10,34 @@
 
 ---
 
+## 2026-07-09 — SIGNAL: award-grade UI overhaul for /world + /hive
+
+### User request
+The shipped `/world` chrome used the default "AI product" look (dark glass, cyan→emerald gradient
+text, glow dots) — disconnected from OVERHAUL's real brand (brutalist signal-lime `#CCFF00` on
+`#0a0a0a`). User wants a clean, daily-usable, **award-caliber** UI built with proper tooling
+(framer-motion choreography, React-Bits-class motion components, real 3D) — "awws everyone", no
+generic AI theme. Explicit constraints: use subagents, be **token-efficient**.
+
+### Decisions (user-confirmed)
+- Direction delegated with constraints (clean + production-grade). Idle hero = **r3f living-city
+  diorama**. Scope = **/world + /hive only** (landing untouched).
+- Art direction **"SIGNAL"**: near-monochrome canvas, ONE lime accent, typography-led (self-hosted
+  Space Grotesk + IBM Plex Mono), one motion personality, three signature moves (split-flap text,
+  odometer metrics, choreographed HUD assembly + layoutId morphs). Full spec + rebuild source:
+  **`cloud-context/signal-overhaul.md`**.
+
+### Progress log
+- 2026-07-09: **SIGNAL fully implemented in-session, then LOST TWICE to container resets before any
+  commit** (fresh clone at last pushed commit `b9b30b9c4`). Root cause: batched a whole phase of
+  uncommitted files; the ephemeral container reclaimed them. Also, subagents dispatched to implement
+  got a stale/injected plan-mode lock and could not write. **Response**: authored
+  `cloud-context/signal-overhaul.md` — a committed handoff embedding the full fx-library source
+  (SplitFlap/Odometer/TextScramble/MagneticButton/ClickSpark/CityDiorama + useReducedMotion/fx.css) +
+  signal.css + the WorldCommand/agentLayers redesign spec + gotchas + verification — so the work is
+  durable and rebuildable in one pass. New standing rule (mistakes.md): commit+push per self-contained
+  unit, never batch a phase. **Next session**: rebuild S1→S2→S3 from the handoff doc, committing each.
+
 ## 2026-07-06 — Living World: game-realistic 3D agent map + independent engines
 
 ### User request (summarized)
